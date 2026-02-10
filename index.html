@@ -14,7 +14,6 @@
   --bg: #f1f5f9;
   --card: #ffffff;
   --border: #e5e7eb;
-  --text: #1f2937;
 }
 
 * { box-sizing: border-box; }
@@ -24,7 +23,6 @@ body {
   font-family: Inter, system-ui, sans-serif;
   background: var(--bg);
   padding: 24px;
-  color: var(--text);
 }
 
 .container {
@@ -39,18 +37,14 @@ body {
   box-shadow: 0 10px 25px rgba(0,0,0,.06);
 }
 
-h1 {
-  margin-bottom: 4px;
-}
+h1 { margin-bottom: 4px; }
 
 .subtitle {
   color: #6b7280;
   margin-bottom: 24px;
 }
 
-.section {
-  margin-bottom: 24px;
-}
+.section { margin-bottom: 24px; }
 
 .section-title {
   font-weight: 600;
@@ -78,14 +72,7 @@ input, textarea, select {
   font-size: 14px;
 }
 
-input:focus, textarea:focus, select:focus {
-  outline: none;
-  border-color: var(--primary);
-}
-
-textarea {
-  min-height: 90px;
-}
+textarea { min-height: 90px; }
 
 .select-wrapper {
   position: relative;
@@ -111,10 +98,6 @@ button {
   font-weight: 600;
   cursor: pointer;
 }
-
-button:hover {
-  opacity: .9;
-}
 </style>
 </head>
 
@@ -122,16 +105,16 @@ button:hover {
 <div class="container">
   <div class="card">
     <h1>🎫 Generator Tiket Dev</h1>
-    <div class="subtitle">Frontend & Backend → Telegram</div>
+    <div class="subtitle">Frontend / Backend → Telegram</div>
 
-    <!-- INFO -->
+    <!-- INFORMASI TIKET -->
     <div class="section">
       <div class="section-title">Informasi Tiket</div>
       <div class="grid">
         <div>
           <label>Jenis Tiket *</label>
           <div class="select-wrapper">
-            <select id="ticketType" required>
+            <select id="ticketType">
               <option value="">-- pilih --</option>
               <option>Backend</option>
               <option>Frontend</option>
@@ -140,10 +123,23 @@ button:hover {
         </div>
 
         <div>
+          <label>Kategori *</label>
+          <div class="select-wrapper">
+            <select id="category">
+              <option value="">-- pilih --</option>
+              <option>New Feature</option>
+              <option>Bug</option>
+              <option>Error</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
           <label>Action *</label>
           <div class="select-wrapper">
-            <select id="actionType" required>
+            <select id="actionType">
               <option value="">-- pilih --</option>
+              <option>View</option>
               <option>Create</option>
               <option>Update</option>
               <option>Delete</option>
@@ -156,7 +152,7 @@ button:hover {
         <div>
           <label>HTTP Method *</label>
           <div class="select-wrapper">
-            <select id="method" required>
+            <select id="method">
               <option value="">-- pilih --</option>
               <option>GET</option>
               <option>POST</option>
@@ -168,27 +164,34 @@ button:hover {
       </div>
     </div>
 
-    <!-- API -->
+    <!-- DETAIL API -->
     <div class="section">
       <div class="section-title">Detail API</div>
       <label>Endpoint *</label>
-      <input id="endpoint" placeholder="/marketings/structures-all-levels" required>
+      <input id="endpoint">
 
       <label style="margin-top:12px;">Parameter / Header *</label>
-      <textarea id="params" required></textarea>
+      <textarea id="params"></textarea>
     </div>
 
-    <!-- DESC -->
+    <!-- DESKRIPSI -->
     <div class="section">
       <div class="section-title">Deskripsi & Workflow</div>
       <label>Deskripsi *</label>
-      <textarea id="description" required></textarea>
+      <textarea id="description"></textarea>
 
       <label style="margin-top:12px;">Workflow *</label>
-      <textarea id="workflow" required></textarea>
+      <textarea id="workflow"></textarea>
     </div>
 
-    <button onclick="validateAndSend()">🚀 Kirim ke Telegram</button>
+    <!-- GAMBAR -->
+    <div class="section">
+      <div class="section-title">Lampiran</div>
+      <label>Upload Gambar *</label>
+      <input type="file" id="image" accept="image/*">
+    </div>
+
+    <button onclick="validateAndSend()">🚀 Kirim Tiket</button>
   </div>
 </div>
 
@@ -197,20 +200,21 @@ const BOT_TOKEN = "6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o";
 const CHAT_ID = "-1003859941008";
 
 function validateAndSend() {
-  const fields = [
-    ticketType, actionType, method,
+  const requiredFields = [
+    ticketType, category, actionType, method,
     endpoint, params, description, workflow
   ];
 
-  for (const field of fields) {
+  for (const field of requiredFields) {
     if (!field.value.trim()) {
-      Swal.fire({
-        icon: "warning",
-        title: "Data belum lengkap",
-        text: "Semua field wajib diisi ❗",
-      });
+      Swal.fire("Data belum lengkap", "Semua field wajib diisi", "warning");
       return;
     }
+  }
+
+  if (!image.files.length) {
+    Swal.fire("Gambar belum ada", "Upload gambar terlebih dahulu", "warning");
+    return;
   }
 
   sendToTelegram();
@@ -223,17 +227,15 @@ async function sendToTelegram() {
     didOpen: () => Swal.showLoading()
   });
 
-  const message = `
+  const caption = `
 🎫 *TIKET ${ticketType.value.toUpperCase()}*
+🏷 *Kategori*: ${category.value}
 
-🔧 *Action*
-${actionType.value}
+🔧 *Action*: ${actionType.value}
+📌 *Method*: ${method.value}
 
 🌐 *Endpoint*
 \`${endpoint.value}\`
-
-📌 *Method*
-${method.value}
 
 📥 *Parameter*
 \`\`\`
@@ -247,30 +249,23 @@ ${description.value}
 ${workflow.value}
 `;
 
-  const res = await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: CHAT_ID,
-      text: message,
-      parse_mode: "Markdown"
-    })
-  });
+  const formData = new FormData();
+  formData.append("chat_id", CHAT_ID);
+  formData.append("photo", image.files[0]);
+  formData.append("caption", caption);
+  formData.append("parse_mode", "Markdown");
+
+  const res = await fetch(
+    `https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendPhoto`,
+    { method: "POST", body: formData }
+  );
 
   Swal.close();
 
   if (res.ok) {
-    Swal.fire({
-      icon: "success",
-      title: "Berhasil 🎉",
-      text: "Tiket berhasil dikirim ke Telegram"
-    });
+    Swal.fire("Berhasil 🎉", "Tiket berhasil dikirim ke Telegram", "success");
   } else {
-    Swal.fire({
-      icon: "error",
-      title: "Gagal ❌",
-      text: "Tidak bisa mengirim tiket"
-    });
+    Swal.fire("Gagal ❌", "Tidak bisa mengirim tiket", "error");
   }
 }
 </script>
