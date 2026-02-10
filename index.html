@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Generator Tiket Dev</title>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+:root {
+  --primary: #2563eb;
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --border: #e5e7eb;
+  --text: #1f2937;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--bg);
+  padding: 24px;
+  color: var(--text);
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.06);
+}
+
+h1 {
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+textarea {
+  min-height: 90px;
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: "▾";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: .9;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="card">
+    <h1>🎫 Generator Tiket Dev</h1>
+    <div class="subtitle">Frontend & Backend → Telegram</div>
+
+    <!-- INFO -->
+    <div class="section">
+      <div class="section-title">Informasi Tiket</div>
+      <div class="grid">
+        <div>
+          <label>Jenis Tiket *</label>
+          <div class="select-wrapper">
+            <select id="ticketType" required>
+              <option value="">-- pilih --</option>
+              <option>Backend</option>
+              <option>Frontend</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label>Action *</label>
+          <div class="select-wrapper">
+            <select id="actionType" required>
+              <option value="">-- pilih --</option>
+              <option>Create</option>
+              <option>Update</option>
+              <option>Delete</option>
+              <option>Print Excel</option>
+              <option>Print PDF</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label>HTTP Method *</label>
+          <div class="select-wrapper">
+            <select id="method" required>
+              <option value="">-- pilih --</option>
+              <option>GET</option>
+              <option>POST</option>
+              <option>PUT</option>
+              <option>DELETE</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API -->
+    <div class="section">
+      <div class="section-title">Detail API</div>
+      <label>Endpoint *</label>
+      <input id="endpoint" placeholder="/marketings/structures-all-levels" required>
+
+      <label style="margin-top:12px;">Parameter / Header *</label>
+      <textarea id="params" required></textarea>
+    </div>
+
+    <!-- DESC -->
+    <div class="section">
+      <div class="section-title">Deskripsi & Workflow</div>
+      <label>Deskripsi *</label>
+      <textarea id="description" required></textarea>
+
+      <label style="margin-top:12px;">Workflow *</label>
+      <textarea id="workflow" required></textarea>
+    </div>
+
+    <button onclick="validateAndSend()">🚀 Kirim ke Telegram</button>
+  </div>
+</div>
+
+<script>
+const BOT_TOKEN = "6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o";
+const CHAT_ID = "-5058704116";
+
+function validateAndSend() {
+  const fields = [
+    ticketType, actionType, method,
+    endpoint, params, description, workflow
+  ];
+
+  for (const field of fields) {
+    if (!field.value.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Data belum lengkap",
+        text: "Semua field wajib diisi ❗",
+      });
+      return;
+    }
+  }
+
+  sendToTelegram();
+}
+
+async function sendToTelegram() {
+  Swal.fire({
+    title: "Mengirim tiket...",
+    allowOutsideClick: false,
+    didOpen: () => Swal.showLoading()
+  });
+
+  const message = `
+🎫 *TIKET ${ticketType.value.toUpperCase()}*
+
+🔧 *Action*
+${actionType.value}
+
+🌐 *Endpoint*
+\`${endpoint.value}\`
+
+📌 *Method*
+${method.value}
+
+📥 *Parameter*
+\`\`\`
+${params.value}
+\`\`\`
+
+📝 *Deskripsi*
+${description.value}
+
+🔄 *Workflow*
+${workflow.value}
+`;
+
+  const res = await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: CHAT_ID,
+      text: message,
+      parse_mode: "Markdown"
+    })
+  });
+
+  Swal.close();
+
+  if (res.ok) {
+    Swal.fire({
+      icon: "success",
+      title: "Berhasil 🎉",
+      text: "Tiket berhasil dikirim ke Telegram"
+    });
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "Gagal ❌",
+      text: "Tidak bisa mengirim tiket"
+    });
+  }
+}
+</script>
+</body>
+</html>
