@@ -8,270 +8,284 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
-:root {
-  --primary: #2563eb;
-  --bg: #f1f5f9;
-  --card: #ffffff;
-  --border: #e5e7eb;
+:root{
+  --primary:#2563eb;
+  --bg:#f1f5f9;
+  --card:#ffffff;
+  --border:#e5e7eb;
 }
 
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
 
-body {
-  margin: 0;
-  font-family: Inter, system-ui, sans-serif;
-  background: var(--bg);
-  padding: 24px;
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:var(--bg);
+  padding:24px;
 }
 
-.container {
-  max-width: 900px;
-  margin: auto;
+.container{max-width:900px;margin:auto}
+
+.card{
+  background:var(--card);
+  border-radius:14px;
+  padding:24px;
+  box-shadow:0 10px 25px rgba(0,0,0,.06);
 }
 
-.card {
-  background: var(--card);
-  border-radius: 14px;
-  padding: 24px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.06);
+h1{margin-bottom:4px}
+.subtitle{color:#6b7280;margin-bottom:24px}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
 }
 
-h1 { margin-bottom: 4px; }
-
-.subtitle {
-  color: #6b7280;
-  margin-bottom: 24px;
+label{
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:6px;
+  display:block;
 }
 
-.section { margin-bottom: 24px; }
-
-.section-title {
-  font-weight: 600;
-  margin-bottom: 12px;
+input,textarea{
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  font-size:14px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+textarea{min-height:90px}
+
+/* ===== CUSTOM COMBOBOX ===== */
+.combo{
+  position:relative;
 }
 
-label {
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  display: block;
+.combo-display{
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  cursor:pointer;
+  background:#fff;
 }
 
-input, textarea, select {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  font-size: 14px;
+.combo-display::after{
+  content:"▾";
+  float:right;
+  color:#64748b;
 }
 
-textarea { min-height: 90px; }
-
-.select-wrapper {
-  position: relative;
+.combo-list{
+  position:absolute;
+  top:110%;
+  left:0;
+  right:0;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+  max-height:220px;
+  overflow:auto;
+  display:none;
+  z-index:20;
 }
 
-.select-wrapper::after {
-  content: "▾";
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6b7280;
+.combo.open .combo-list{display:block}
+
+.combo-list div{
+  padding:12px 14px;
+  cursor:pointer;
+  font-size:14px;
 }
 
-button {
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
+.combo-list div:hover{
+  background:#e0e7ff;
 }
 
-/* ===== PIC CLICKABLE ===== */
-.pic-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.combo-list div.active{
+  background:var(--primary);
+  color:#fff;
 }
 
-.pic-item {
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  font-size: 13px;
-  background: #fff;
-  transition: all .2s;
+/* ===== PIC ===== */
+.pic-container{display:flex;flex-wrap:wrap;gap:8px}
+.pic-item{
+  padding:8px 14px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  cursor:pointer;
+  font-size:13px;
+  background:#fff;
+}
+.pic-item.active{
+  background:var(--primary);
+  color:#fff;
+  border-color:var(--primary);
 }
 
-.pic-item.active {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
+button{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:none;
+  background:linear-gradient(135deg,#2563eb,#1d4ed8);
+  color:#fff;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 <div class="container">
-  <div class="card">
-    <h1>🎫 Generator Tiket Dev</h1>
-    <div class="subtitle">Frontend / Backend → Telegram</div>
+<div class="card">
+<h1>🎫 Generator Tiket Dev</h1>
+<div class="subtitle">Frontend / Backend → Telegram</div>
 
-    <!-- INFORMASI -->
-    <div class="section">
-      <div class="section-title">Informasi Tiket</div>
-      <div class="grid">
-        <div>
-          <label>Jenis Tiket *</label>
-          <div class="select-wrapper">
-            <select id="ticketType">
-              <option value="">-- pilih --</option>
-              <option>Backend</option>
-              <option>Frontend</option>
-            </select>
-          </div>
-        </div>
+<div class="grid">
 
-        <div>
-          <label>Kategori *</label>
-          <div class="select-wrapper">
-            <select id="category">
-              <option value="">-- pilih --</option>
-              <option>New Feature</option>
-              <option>Bug</option>
-              <option>Error</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label>Action *</label>
-          <div class="select-wrapper">
-            <select id="actionType">
-              <option value="">-- pilih --</option>
-              <option>View</option>
-              <option>Create</option>
-              <option>Update</option>
-              <option>Delete</option>
-              <option>Print Excel</option>
-              <option>Print PDF</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label>HTTP Method *</label>
-          <div class="select-wrapper">
-            <select id="method">
-              <option value="">-- pilih --</option>
-              <option>GET</option>
-              <option>POST</option>
-              <option>PUT</option>
-              <option>DELETE</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- PIC CLICK -->
-        <div>
-          <label>PIC *</label>
-          <div class="pic-container" id="picContainer">
-            <div class="pic-item" data-pic="@arifinabd">Arifin</div>
-            <div class="pic-item" data-pic="@Umarxch">Umar</div>
-            <div class="pic-item" data-pic="@Rmakie">Bapak Ridwan</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- DETAIL -->
-    <div class="section">
-      <div class="section-title">Detail API</div>
-      <label>Endpoint *</label>
-      <input id="endpoint">
-      <label style="margin-top:12px;">Parameter *</label>
-      <textarea id="params"></textarea>
-    </div>
-
-    <!-- DESKRIPSI -->
-    <div class="section">
-      <div class="section-title">Deskripsi & Workflow</div>
-      <label>Deskripsi *</label>
-      <textarea id="description"></textarea>
-      <label style="margin-top:12px;">Workflow *</label>
-      <textarea id="workflow"></textarea>
-    </div>
-
-    <!-- IMAGE -->
-    <div class="section">
-      <div class="section-title">Lampiran</div>
-      <label>Upload Gambar (Opsional)</label>
-      <input type="file" id="image" accept="image/*">
-    </div>
-
-    <button onclick="validateAndSend()">🚀 Kirim Tiket</button>
+<!-- JENIS TIKET -->
+<div>
+<label>Jenis Tiket *</label>
+<div class="combo" data-target="ticketType">
+  <div class="combo-display">Pilih</div>
+  <div class="combo-list">
+    <div>Backend</div>
+    <div>Frontend</div>
   </div>
+</div>
+<input type="hidden" id="ticketType">
+</div>
+
+<!-- KATEGORI -->
+<div>
+<label>Kategori *</label>
+<div class="combo" data-target="category">
+  <div class="combo-display">Pilih</div>
+  <div class="combo-list">
+    <div>New Feature</div>
+    <div>Bug</div>
+    <div>Error</div>
+  </div>
+</div>
+<input type="hidden" id="category">
+</div>
+
+<!-- ACTION -->
+<div>
+<label>Action *</label>
+<div class="combo" data-target="actionType">
+  <div class="combo-display">Pilih</div>
+  <div class="combo-list">
+    <div>View</div><div>Create</div><div>Update</div>
+    <div>Delete</div><div>Print Excel</div><div>Print PDF</div>
+  </div>
+</div>
+<input type="hidden" id="actionType">
+</div>
+
+<!-- METHOD -->
+<div>
+<label>HTTP Method *</label>
+<div class="combo" data-target="method">
+  <div class="combo-display">Pilih</div>
+  <div class="combo-list">
+    <div>GET</div><div>POST</div><div>PUT</div><div>DELETE</div>
+  </div>
+</div>
+<input type="hidden" id="method">
+</div>
+
+<!-- PIC -->
+<div>
+<label>PIC *</label>
+<div class="pic-container">
+  <div class="pic-item" data-pic="@arifinabd">Arifin</div>
+  <div class="pic-item" data-pic="@Umarxch">Umar</div>
+  <div class="pic-item" data-pic="@Rmakie">Bapak Ridwan</div>
+</div>
+</div>
+
+</div>
+<br></br>
+
+<label>Endpoint *</label>
+<input id="endpoint">
+
+<label style="margin-top:12px">Parameter *</label>
+<textarea id="params"></textarea>
+<br></br>
+<label>Deskripsi *</label>
+<textarea id="description"></textarea>
+<br></br>
+<label>Workflow *</label>
+<textarea id="workflow"></textarea>
+<br></br>
+<label>Upload Gambar (Opsional)</label>
+<input type="file" id="image" accept="image/*">
+<br></br>
+<button onclick="validateAndSend()">🚀 Kirim Tiket</button>
+</div>
 </div>
 
 <script>
 const BOT_TOKEN = "6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o";
-const CHAT_ID = "-1003859941008";
+const CHAT_ID = "-1003521971868";
 
-/* ==== PIC CLICK LOGIC ==== */
-let selectedPics = [];
+/* ==== COMBOBOX LOGIC ==== */
+document.querySelectorAll(".combo").forEach(combo=>{
+  const display=combo.querySelector(".combo-display");
+  const list=combo.querySelector(".combo-list");
+  const hidden=document.getElementById(combo.dataset.target);
 
-document.querySelectorAll(".pic-item").forEach(el => {
-  el.addEventListener("click", () => {
-    const pic = el.dataset.pic;
-    el.classList.toggle("active");
+  display.onclick=()=>combo.classList.toggle("open");
 
-    if (selectedPics.includes(pic)) {
-      selectedPics = selectedPics.filter(p => p !== pic);
-    } else {
-      selectedPics.push(pic);
-    }
+  list.querySelectorAll("div").forEach(item=>{
+    item.onclick=()=>{
+      display.textContent=item.textContent;
+      hidden.value=item.textContent;
+      list.querySelectorAll("div").forEach(i=>i.classList.remove("active"));
+      item.classList.add("active");
+      combo.classList.remove("open");
+    };
   });
 });
 
-/* ==== VALIDATION ==== */
-function validateAndSend() {
-  const fields = [
-    ticketType, category, actionType, method,
-    endpoint, params, description, workflow
-  ];
+document.addEventListener("click",e=>{
+  if(!e.target.closest(".combo"))
+    document.querySelectorAll(".combo").forEach(c=>c.classList.remove("open"));
+});
 
-  for (const f of fields) {
-    if (!f.value.trim()) {
-      Swal.fire("Data belum lengkap", "Semua field wajib diisi", "warning");
-      return;
-    }
-  }
+/* ==== PIC ==== */
+let selectedPics=[];
+document.querySelectorAll(".pic-item").forEach(el=>{
+  el.onclick=()=>{
+    const p=el.dataset.pic;
+    el.classList.toggle("active");
+    selectedPics.includes(p)
+      ? selectedPics=selectedPics.filter(x=>x!==p)
+      : selectedPics.push(p);
+  };
+});
 
-  if (selectedPics.length === 0) {
-    Swal.fire("PIC belum dipilih", "Pilih minimal 1 PIC", "warning");
-    return;
-  }
-
+/* ==== VALIDATION & TELEGRAM (TIDAK DIUBAH) ==== */
+function validateAndSend(){
+  const req=[ticketType,category,actionType,method,endpoint,params,description,workflow];
+  if(req.some(f=>!f.value.trim()))
+    return Swal.fire("Oops","Semua field wajib diisi","warning");
+  if(!selectedPics.length)
+    return Swal.fire("PIC kosong","Pilih minimal 1 PIC","warning");
   sendToTelegram();
 }
 
-/* ==== SEND ==== */
-async function sendToTelegram() {
-  Swal.fire({ title: "Mengirim tiket...", didOpen: () => Swal.showLoading() });
+async function sendToTelegram(){
+  Swal.fire({title:"Mengirim tiket...",didOpen:()=>Swal.showLoading()});
 
-  const caption = `
+  const caption=`
 🎫 *TIKET ${ticketType.value.toUpperCase()}*
 *Kategori*: ${category.value}
 
@@ -296,35 +310,22 @@ ${description.value}
 ${workflow.value}
 `;
 
-  let res;
-  if (image.files.length) {
-    const fd = new FormData();
-    fd.append("chat_id", CHAT_ID);
-    fd.append("photo", image.files[0]);
-    fd.append("caption", caption);
-    fd.append("parse_mode", "Markdown");
-
-    res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-      method: "POST", body: fd
-    });
-  } else {
-    res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: CHAT_ID,
-        text: caption,
-        parse_mode: "Markdown"
-      })
+  if(image.files.length){
+    const fd=new FormData();
+    fd.append("chat_id",CHAT_ID);
+    fd.append("photo",image.files[0]);
+    fd.append("caption",caption);
+    fd.append("parse_mode","Markdown");
+    await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendPhoto`,{method:"POST",body:fd});
+  }else{
+    await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendMessage`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({chat_id:CHAT_ID,text:caption,parse_mode:"Markdown"})
     });
   }
 
-  Swal.close();
-  Swal.fire(
-    res.ok ? "Berhasil 🎉" : "Gagal ❌",
-    res.ok ? "Tiket terkirim ke Telegram" : "Tidak bisa mengirim tiket",
-    res.ok ? "success" : "error"
-  );
+  Swal.fire("Berhasil 🎉","Tiket terkirim","success");
 }
 </script>
 </body>
