@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Generator Tiket Dev</title>
 
-<!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
@@ -98,6 +97,29 @@ button {
   font-weight: 600;
   cursor: pointer;
 }
+
+/* ===== PIC CLICKABLE ===== */
+.pic-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pic-item {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 13px;
+  background: #fff;
+  transition: all .2s;
+}
+
+.pic-item.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
 </style>
 </head>
 
@@ -107,7 +129,7 @@ button {
     <h1>🎫 Generator Tiket Dev</h1>
     <div class="subtitle">Frontend / Backend → Telegram</div>
 
-    <!-- INFORMASI TIKET -->
+    <!-- INFORMASI -->
     <div class="section">
       <div class="section-title">Informasi Tiket</div>
       <div class="grid">
@@ -161,16 +183,25 @@ button {
             </select>
           </div>
         </div>
+
+        <!-- PIC CLICK -->
+        <div>
+          <label>PIC *</label>
+          <div class="pic-container" id="picContainer">
+            <div class="pic-item" data-pic="@arifinabd">Arifin</div>
+            <div class="pic-item" data-pic="@Umarxch">Umar</div>
+            <div class="pic-item" data-pic="@Rmakie">Bapak Ridwan</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- DETAIL API -->
+    <!-- DETAIL -->
     <div class="section">
       <div class="section-title">Detail API</div>
       <label>Endpoint *</label>
       <input id="endpoint">
-
-      <label style="margin-top:12px;">Parameter / Header *</label>
+      <label style="margin-top:12px;">Parameter *</label>
       <textarea id="params"></textarea>
     </div>
 
@@ -179,15 +210,14 @@ button {
       <div class="section-title">Deskripsi & Workflow</div>
       <label>Deskripsi *</label>
       <textarea id="description"></textarea>
-
       <label style="margin-top:12px;">Workflow *</label>
       <textarea id="workflow"></textarea>
     </div>
 
-    <!-- GAMBAR -->
+    <!-- IMAGE -->
     <div class="section">
       <div class="section-title">Lampiran</div>
-      <label>Upload Gambar *</label>
+      <label>Upload Gambar (Opsional)</label>
       <input type="file" id="image" accept="image/*">
     </div>
 
@@ -199,74 +229,102 @@ button {
 const BOT_TOKEN = "6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o";
 const CHAT_ID = "-1003859941008";
 
+/* ==== PIC CLICK LOGIC ==== */
+let selectedPics = [];
+
+document.querySelectorAll(".pic-item").forEach(el => {
+  el.addEventListener("click", () => {
+    const pic = el.dataset.pic;
+    el.classList.toggle("active");
+
+    if (selectedPics.includes(pic)) {
+      selectedPics = selectedPics.filter(p => p !== pic);
+    } else {
+      selectedPics.push(pic);
+    }
+  });
+});
+
+/* ==== VALIDATION ==== */
 function validateAndSend() {
-  const requiredFields = [
+  const fields = [
     ticketType, category, actionType, method,
     endpoint, params, description, workflow
   ];
 
-  for (const field of requiredFields) {
-    if (!field.value.trim()) {
+  for (const f of fields) {
+    if (!f.value.trim()) {
       Swal.fire("Data belum lengkap", "Semua field wajib diisi", "warning");
       return;
     }
   }
 
-  if (!image.files.length) {
-    Swal.fire("Gambar belum ada", "Upload gambar terlebih dahulu", "warning");
+  if (selectedPics.length === 0) {
+    Swal.fire("PIC belum dipilih", "Pilih minimal 1 PIC", "warning");
     return;
   }
 
   sendToTelegram();
 }
 
+/* ==== SEND ==== */
 async function sendToTelegram() {
-  Swal.fire({
-    title: "Mengirim tiket...",
-    allowOutsideClick: false,
-    didOpen: () => Swal.showLoading()
-  });
+  Swal.fire({ title: "Mengirim tiket...", didOpen: () => Swal.showLoading() });
 
   const caption = `
 🎫 *TIKET ${ticketType.value.toUpperCase()}*
- *Kategori*: ${category.value}
+*Kategori*: ${category.value}
 
- *Action*: ${actionType.value}
- *Method*: ${method.value}
+*PIC*
+${selectedPics.join(" ")}
 
- *Endpoint*
+*Action*: ${actionType.value}
+*Method*: ${method.value}
+
+*Endpoint*
 \`${endpoint.value}\`
 
- *Parameter*
+*Parameter*
 \`\`\`
 ${params.value}
 \`\`\`
 
- *Deskripsi*
+*Deskripsi*
 ${description.value}
 
- *Workflow*
+*Workflow*
 ${workflow.value}
 `;
 
-  const formData = new FormData();
-  formData.append("chat_id", CHAT_ID);
-  formData.append("photo", image.files[0]);
-  formData.append("caption", caption);
-  formData.append("parse_mode", "Markdown");
+  let res;
+  if (image.files.length) {
+    const fd = new FormData();
+    fd.append("chat_id", CHAT_ID);
+    fd.append("photo", image.files[0]);
+    fd.append("caption", caption);
+    fd.append("parse_mode", "Markdown");
 
-  const res = await fetch(
-    `https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendPhoto`,
-    { method: "POST", body: formData }
-  );
+    res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+      method: "POST", body: fd
+    });
+  } else {
+    res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: caption,
+        parse_mode: "Markdown"
+      })
+    });
+  }
 
   Swal.close();
-
-  if (res.ok) {
-    Swal.fire("Berhasil 🎉", "Tiket berhasil dikirim ke Telegram", "success");
-  } else {
-    Swal.fire("Gagal ❌", "Tidak bisa mengirim tiket", "error");
-  }
+  Swal.fire(
+    res.ok ? "Berhasil 🎉" : "Gagal ❌",
+    res.ok ? "Tiket terkirim ke Telegram" : "Tidak bisa mengirim tiket",
+    res.ok ? "success" : "error"
+  );
 }
 </script>
 </body>
