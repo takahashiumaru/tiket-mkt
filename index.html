@@ -3,38 +3,101 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Tiket MKT</title>
+<title>🎊 Tiket MKT - CNY Edition</title>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
 :root{
-  --primary:#2563eb;
-  --bg:#f1f5f9;
+  --cny-red:#b91c1c;
+  --cny-red-dark:#7f1d1d;
+  --cny-gold:#facc15;
+  --bg:#fff7ed;
   --card:#ffffff;
   --border:#e5e7eb;
 }
 
+/* ===== RESET ===== */
 *{box-sizing:border-box}
 
 body{
   margin:0;
   font-family:Inter,system-ui,sans-serif;
-  background:var(--bg);
+  background:
+    radial-gradient(circle at top,#fecaca 0%,transparent 40%),
+    linear-gradient(180deg,#fff7ed,#fee2e2);
   padding:24px;
+  overflow-x:hidden;
 }
 
-.container{max-width:900px;margin:auto}
+/* ===== LANTERN ===== */
+.lantern{
+  position:fixed;
+  top:-120px;
+  width:80px;
+  height:100px;
+  background:linear-gradient(180deg,#dc2626,#991b1b);
+  border-radius:40px;
+  box-shadow:0 0 25px rgba(220,38,38,.7);
+  animation:float 6s ease-in-out infinite;
+  z-index:1;
+}
+.lantern::after{
+  content:"";
+  position:absolute;
+  bottom:-14px;
+  left:50%;
+  width:6px;
+  height:14px;
+  background:#facc15;
+  transform:translateX(-50%);
+}
+.lantern.left{left:40px}
+.lantern.right{right:40px;animation-delay:2s}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(40px)}
+}
+
+/* ===== CONFETTI ===== */
+.confetti{
+  position:fixed;
+  width:8px;
+  height:14px;
+  background:var(--cny-gold);
+  top:-20px;
+  animation:fall linear forwards;
+  z-index:999;
+}
+@keyframes fall{
+  to{
+    transform:translateY(110vh) rotate(360deg);
+    opacity:0;
+  }
+}
+
+/* ===== LAYOUT ===== */
+.container{max-width:900px;margin:auto;position:relative;z-index:2}
 
 .card{
   background:var(--card);
-  border-radius:14px;
-  padding:24px;
-  box-shadow:0 10px 25px rgba(0,0,0,.06);
+  border-radius:18px;
+  padding:26px;
+  box-shadow:0 20px 40px rgba(0,0,0,.12);
+  border-top:6px solid var(--cny-red);
 }
 
-h1{margin-bottom:4px}
-.subtitle{color:#6b7280;margin-bottom:24px}
+h1{
+  margin-bottom:6px;
+  color:var(--cny-red-dark);
+}
+
+.subtitle{
+  color:#92400e;
+  margin-bottom:24px;
+  font-weight:500;
+}
 
 .grid{
   display:grid;
@@ -47,6 +110,7 @@ label{
   font-weight:600;
   margin-bottom:6px;
   display:block;
+  color:#7f1d1d;
 }
 
 input,textarea{
@@ -59,11 +123,8 @@ input,textarea{
 
 textarea{min-height:90px}
 
-/* ===== CUSTOM COMBOBOX ===== */
-.combo{
-  position:relative;
-}
-
+/* ===== COMBO ===== */
+.combo{position:relative}
 .combo-display{
   padding:10px 12px;
   border:1px solid var(--border);
@@ -71,13 +132,10 @@ textarea{min-height:90px}
   cursor:pointer;
   background:#fff;
 }
-
 .combo-display::after{
-  content:"▾";
+  content:"🧧";
   float:right;
-  color:#64748b;
 }
-
 .combo-list{
   position:absolute;
   top:110%;
@@ -86,72 +144,49 @@ textarea{min-height:90px}
   background:#fff;
   border:1px solid var(--border);
   border-radius:12px;
-  box-shadow:0 10px 25px rgba(0,0,0,.08);
-  max-height:220px;
-  overflow:auto;
+  box-shadow:0 12px 30px rgba(0,0,0,.15);
   display:none;
   z-index:20;
 }
-
 .combo.open .combo-list{display:block}
-
 .combo-list div{
   padding:12px 14px;
   cursor:pointer;
-  font-size:14px;
 }
-
 .combo-list div:hover{
-  background:#e0e7ff;
+  background:#fee2e2;
 }
-
 .combo-list div.active{
-  background:var(--primary);
+  background:var(--cny-red);
   color:#fff;
 }
 
 /* ===== PIC ===== */
 .pic-container{display:flex;flex-wrap:wrap;gap:8px}
 .pic-item{
-  padding:8px 14px;
+  padding:8px 16px;
   border-radius:999px;
   border:1px solid var(--border);
   cursor:pointer;
-  font-size:13px;
-  background:#fff;
 }
 .pic-item.active{
-  background:var(--primary);
+  background:var(--cny-red);
   color:#fff;
-  border-color:var(--primary);
+  border-color:var(--cny-red);
 }
 
-button{
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:none;
-  background:linear-gradient(135deg,#2563eb,#1d4ed8);
-  color:#fff;
-  font-size:16px;
-  font-weight:600;
-  cursor:pointer;
-}
-
+/* ===== IMAGE ===== */
 #dropArea{
-  border:2px dashed var(--border);
-  border-radius:12px;
+  border:2px dashed #fca5a5;
+  border-radius:14px;
   padding:20px;
   text-align:center;
   cursor:pointer;
-  color:#6b7280;
-  margin-top:8px;
+  color:#7f1d1d;
 }
-
 #dropArea.dragover{
-  background:#e0e7ff;
+  background:#fee2e2;
 }
-
 #imagePreview{
   max-width:100%;
   border-radius:12px;
@@ -159,28 +194,42 @@ button{
   display:none;
   border:1px solid var(--border);
 }
-
 #removeImageBtn{
   display:none;
   margin-top:6px;
   padding:6px 12px;
   border:none;
-  background:#ef4444;
+  background:#dc2626;
   color:#fff;
   border-radius:8px;
   cursor:pointer;
-  font-size:14px;
 }
-</style>
 
-<link rel="icon" type="image/png" href="favicon.png">
+/* ===== BUTTON ===== */
+button{
+  width:100%;
+  padding:16px;
+  border-radius:14px;
+  border:none;
+  background:linear-gradient(135deg,#dc2626,#991b1b);
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
+button:hover{opacity:.95}
+</style>
 </head>
 
 <body>
+
+<div class="lantern left"></div>
+<div class="lantern right"></div>
+
 <div class="container">
 <div class="card">
-<h1>🎫 Generator Tiket Dev</h1>
-<div class="subtitle">Frontend / Backend → Telegram</div>
+<h1>🧨 Generator Tiket Dev</h1>
+<div class="subtitle">Chinese New Year Edition 🎊</div>
 
 <div class="grid">
 
@@ -282,6 +331,25 @@ button{
 <script>
 const BOT_TOKEN = "6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o";
 const CHAT_ID = "-1003859941008";
+
+/* ===== CONFETTI TRIGGER ===== */
+function launchConfetti(){
+  for(let i=0;i<40;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.animationDuration=(Math.random()*2+2)+"s";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),4000);
+  }
+}
+
+/* override success */
+const oldFire = Swal.fire;
+Swal.fire = function(...args){
+  if(args[0]==="Berhasil 🎉") launchConfetti();
+  return oldFire.apply(this,args);
+}
 
 /* ==== COMBOBOX LOGIC ==== */
 document.querySelectorAll(".combo").forEach(combo=>{
