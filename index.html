@@ -487,9 +487,9 @@ ${workflow.value}
     fd.append("photo",imageInput.files[0]);
     fd.append("caption",caption);
     fd.append("parse_mode","Markdown");
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`,{method:"POST",body:fd});
+    await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendPhoto`,{method:"POST",body:fd});
   }else{
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+    await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendMessage`,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({chat_id:CHAT_ID,text:caption,parse_mode:"Markdown"})
