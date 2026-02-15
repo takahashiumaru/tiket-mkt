@@ -3,98 +3,134 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>🎊 Tiket MKT - CNY Edition</title>
 
+<title>Tiket MKT</title>
+<link rel="icon" type="image/png" href="favicon.png">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+/* =========================
+   AUTO THEME SWITCH
+   ========================= */
+
+const now = new Date();
+const year = now.getFullYear();
+
+/* CNY aktif sampai 29 Februari */
+const cnyEnd = new Date(year, 1, 18);
+
+if (now > cnyEnd) {
+  document.documentElement.setAttribute("data-theme", "ramadhan");
+} else {
+  document.documentElement.setAttribute("data-theme", "cny");
+}
+</script>
+
 <style>
-:root{
-  --cny-red:#b91c1c;
-  --cny-red-dark:#7f1d1d;
-  --cny-gold:#facc15;
-  --bg:#fff7ed;
-  --card:#ffffff;
+/* =========================
+   ROOT THEME
+   ========================= */
+
+:root[data-theme="cny"]{
+  --primary:#b91c1c;
+  --primary-dark:#7f1d1d;
+  --accent:#facc15;
+  --bg1:#fff7ed;
+  --bg2:#fee2e2;
   --border:#e5e7eb;
 }
 
-/* ===== RESET ===== */
+:root[data-theme="ramadhan"]{
+  --primary:#065f46;
+  --primary-dark:#047857;
+  --accent:#facc15;
+  --bg1:#ecfdf5;
+  --bg2:#d1fae5;
+  --border:#d1fae5;
+}
+
+/* RESET */
 *{box-sizing:border-box}
 
 body{
   margin:0;
   font-family:Inter,system-ui,sans-serif;
   background:
-    radial-gradient(circle at top,#fecaca 0%,transparent 40%),
-    linear-gradient(180deg,#fff7ed,#fee2e2);
+    radial-gradient(circle at top,var(--bg2) 0%,transparent 40%),
+    linear-gradient(180deg,var(--bg1),var(--bg2));
   padding:24px;
   overflow-x:hidden;
 }
 
-/* ===== LANTERN ===== */
-.lantern{
+/* FLOATING DECORATION */
+.floating{
   position:fixed;
   top:-120px;
   width:80px;
   height:100px;
-  background:linear-gradient(180deg,#dc2626,#991b1b);
+  background:linear-gradient(180deg,var(--primary),var(--primary-dark));
   border-radius:40px;
-  box-shadow:0 0 25px rgba(220,38,38,.7);
+  box-shadow:0 0 25px rgba(0,0,0,.2);
   animation:float 6s ease-in-out infinite;
   z-index:1;
 }
-.lantern::after{
+
+.floating::after{
   content:"";
   position:absolute;
   bottom:-14px;
   left:50%;
   width:6px;
   height:14px;
-  background:#facc15;
+  background:var(--accent);
   transform:translateX(-50%);
 }
-.lantern.left{left:40px}
-.lantern.right{right:40px;animation-delay:2s}
+
+.floating.left{left:40px}
+.floating.right{right:40px;animation-delay:2s}
 
 @keyframes float{
   0%,100%{transform:translateY(0)}
   50%{transform:translateY(40px)}
 }
 
-/* ===== CONFETTI ===== */
-.confetti{
+/* SPARKLE */
+.sparkle{
   position:fixed;
-  width:8px;
-  height:14px;
-  background:var(--cny-gold);
-  top:-20px;
+  width:6px;
+  height:6px;
+  background:var(--accent);
+  border-radius:50%;
+  top:-10px;
   animation:fall linear forwards;
   z-index:999;
 }
+
 @keyframes fall{
   to{
-    transform:translateY(110vh) rotate(360deg);
+    transform:translateY(110vh);
     opacity:0;
   }
 }
 
-/* ===== LAYOUT ===== */
+/* LAYOUT */
 .container{max-width:900px;margin:auto;position:relative;z-index:2}
 
 .card{
-  background:var(--card);
+  background:#fff;
   border-radius:18px;
   padding:26px;
   box-shadow:0 20px 40px rgba(0,0,0,.12);
-  border-top:6px solid var(--cny-red);
+  border-top:6px solid var(--primary);
 }
 
 h1{
   margin-bottom:6px;
-  color:var(--cny-red-dark);
+  color:var(--primary-dark);
 }
 
 .subtitle{
-  color:#92400e;
+  color:var(--primary);
   margin-bottom:24px;
   font-weight:500;
 }
@@ -110,7 +146,7 @@ label{
   font-weight:600;
   margin-bottom:6px;
   display:block;
-  color:#7f1d1d;
+  color:var(--primary-dark);
 }
 
 input,textarea{
@@ -123,7 +159,7 @@ input,textarea{
 
 textarea{min-height:90px}
 
-/* ===== COMBO ===== */
+/* COMBO */
 .combo{position:relative}
 .combo-display{
   padding:10px 12px;
@@ -132,10 +168,17 @@ textarea{min-height:90px}
   cursor:pointer;
   background:#fff;
 }
-.combo-display::after{
+
+:root[data-theme="cny"] .combo-display::after{
   content:"🧧";
   float:right;
 }
+
+:root[data-theme="ramadhan"] .combo-display::after{
+  content:"✨";
+  float:right;
+}
+
 .combo-list{
   position:absolute;
   top:110%;
@@ -154,14 +197,14 @@ textarea{min-height:90px}
   cursor:pointer;
 }
 .combo-list div:hover{
-  background:#fee2e2;
+  background:var(--bg2);
 }
 .combo-list div.active{
-  background:var(--cny-red);
+  background:var(--primary);
   color:#fff;
 }
 
-/* ===== PIC ===== */
+/* PIC */
 .pic-container{display:flex;flex-wrap:wrap;gap:8px}
 .pic-item{
   padding:8px 16px;
@@ -170,22 +213,22 @@ textarea{min-height:90px}
   cursor:pointer;
 }
 .pic-item.active{
-  background:var(--cny-red);
+  background:var(--primary);
   color:#fff;
-  border-color:var(--cny-red);
+  border-color:var(--primary);
 }
 
-/* ===== IMAGE ===== */
+/* IMAGE */
 #dropArea{
-  border:2px dashed #fca5a5;
+  border:2px dashed var(--primary);
   border-radius:14px;
   padding:20px;
   text-align:center;
   cursor:pointer;
-  color:#7f1d1d;
+  color:var(--primary-dark);
 }
 #dropArea.dragover{
-  background:#fee2e2;
+  background:var(--bg2);
 }
 #imagePreview{
   max-width:100%;
@@ -199,108 +242,106 @@ textarea{min-height:90px}
   margin-top:6px;
   padding:6px 12px;
   border:none;
-  background:#dc2626;
+  background:var(--primary-dark);
   color:#fff;
   border-radius:8px;
   cursor:pointer;
 }
 
-/* ===== BUTTON ===== */
+/* BUTTON */
 button{
   width:100%;
   padding:16px;
   border-radius:14px;
   border:none;
-  background:linear-gradient(135deg,#dc2626,#991b1b);
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
   color:#fff;
   font-size:16px;
   font-weight:700;
   cursor:pointer;
 }
 button:hover{opacity:.95}
+
 </style>
 </head>
 
 <body>
 
-<div class="lantern left"></div>
-<div class="lantern right"></div>
+<div class="floating left"></div>
+<div class="floating right"></div>
 
 <div class="container">
 <div class="card">
-<h1>🧨 Generator Tiket Dev</h1>
-<div class="subtitle">Chinese New Year Edition 🎊</div>
+
+<h1 id="mainTitle"></h1>
+<div class="subtitle" id="subTitle"></div>
 
 <div class="grid">
 
-<!-- JENIS TIKET -->
 <div>
 <label>Jenis Tiket *</label>
 <div class="combo" data-target="ticketType">
-  <div class="combo-display">Pilih</div>
-  <div class="combo-list">
-    <div>Backend</div>
-    <div>Frontend</div>
-    <div>Quality Assurance</div>
-  </div>
+<div class="combo-display">Pilih</div>
+<div class="combo-list">
+<div>Backend</div>
+<div>Frontend</div>
+<div>Quality Assurance</div>
+</div>
 </div>
 <input type="hidden" id="ticketType">
 </div>
 
-<!-- KATEGORI -->
 <div>
 <label>Kategori *</label>
 <div class="combo" data-target="category">
-  <div class="combo-display">Pilih</div>
-  <div class="combo-list">
-    <div>New Feature</div>
-    <div>Revision Feature</div>
-    <div>Cek Data</div>
-    <div>Bug</div>
-    <div>Error</div>
-  </div>
+<div class="combo-display">Pilih</div>
+<div class="combo-list">
+<div>New Feature</div>
+<div>Revision Feature</div>
+<div>Cek Data</div>
+<div>Bug</div>
+<div>Error</div>
+</div>
 </div>
 <input type="hidden" id="category">
 </div>
 
-<!-- ACTION -->
 <div>
 <label>Action *</label>
 <div class="combo" data-target="actionType">
-  <div class="combo-display">Pilih</div>
-  <div class="combo-list">
-    <div>View</div><div>Create</div><div>Update</div>
-    <div>Delete</div><div>Print Excel</div><div>Print PDF</div>
-    <div>CRUD</div>
-  </div>
+<div class="combo-display">Pilih</div>
+<div class="combo-list">
+<div>View</div><div>Create</div><div>Update</div>
+<div>Delete</div><div>Print Excel</div><div>Print PDF</div>
+<div>CRUD</div>
+</div>
 </div>
 <input type="hidden" id="actionType">
 </div>
 
-<!-- METHOD -->
 <div>
 <label>HTTP Method *</label>
 <div class="combo" data-target="method">
-  <div class="combo-display">Pilih</div>
-  <div class="combo-list">
-    <div>GET</div><div>POST</div><div>PUT</div><div>DELETE</div>
-    <div>CRUD</div>
-  </div>
+<div class="combo-display">Pilih</div>
+<div class="combo-list">
+<div>GET</div><div>POST</div><div>PUT</div><div>DELETE</div>
+<div>CRUD</div>
+</div>
 </div>
 <input type="hidden" id="method">
 </div>
 
-<!-- PIC -->
 <div>
 <label>PIC *</label>
 <div class="pic-container">
-  <div class="pic-item" data-pic="@arifinabd">Arifin</div>
-  <div class="pic-item" data-pic="@Umarxch">Umar</div>
-  <div class="pic-item" data-pic="@Rmakie">Pak Ridwan</div>
+<div class="pic-item" data-pic="@arifinabd">Arifin</div>
+<div class="pic-item" data-pic="@Umarxch">Umar</div>
+<div class="pic-item" data-pic="@Rmakie">Pak Ridwan</div>
 </div>
 </div>
 
 </div>
+
 <br>
 
 <label>Endpoint *</label>
@@ -308,50 +349,70 @@ button:hover{opacity:.95}
 
 <label style="margin-top:12px">Parameter *</label>
 <textarea id="params"></textarea>
+
 <br>
 <label>Deskripsi *</label>
 <textarea id="description"></textarea>
+
 <br>
 <label>Workflow *</label>
 <textarea id="workflow"></textarea>
-<br>
 
-<!-- Upload Gambar -->
+<br>
 <label>Upload Gambar (Opsional)</label>
 <div id="dropArea">Tarik & lepas gambar di sini atau klik / paste (Ctrl+V)</div>
 <input type="file" id="image" accept="image/*" style="display:none">
 <img id="imagePreview">
 <button id="removeImageBtn">Hapus Gambar</button>
+
 <br><br>
 
 <button onclick="validateAndSend()">🚀 Kirim Tiket</button>
+
 </div>
 </div>
 
 <script>
-const BOT_TOKEN = "6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o";
-const CHAT_ID = "-1003859941008";
 
-/* ===== CONFETTI TRIGGER ===== */
-function launchConfetti(){
+/* =========================
+   SET TITLE BASED ON THEME
+   ========================= */
+
+document.addEventListener("DOMContentLoaded",()=>{
+  const theme = document.documentElement.dataset.theme;
+
+  if(theme === "ramadhan"){
+    mainTitle.innerHTML = "🌙 Generator Tiket Dev";
+    subTitle.innerHTML = "Ramadhan Edition ✨";
+  }else{
+    mainTitle.innerHTML = "🧨 Generator Tiket Dev";
+    subTitle.innerHTML = "Chinese New Year Edition 🎊";
+  }
+});
+
+/* SPARKLE EFFECT */
+function launchSparkle(){
   for(let i=0;i<40;i++){
-    const c=document.createElement("div");
-    c.className="confetti";
-    c.style.left=Math.random()*100+"vw";
-    c.style.animationDuration=(Math.random()*2+2)+"s";
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(),4000);
+    const s=document.createElement("div");
+    s.className="sparkle";
+    s.style.left=Math.random()*100+"vw";
+    s.style.animationDuration=(Math.random()*2+2)+"s";
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),4000);
   }
 }
 
-/* override success */
+/* Override Swal Success */
 const oldFire = Swal.fire;
 Swal.fire = function(...args){
-  if(args[0]==="Berhasil 🎉") launchConfetti();
+  if(args[0]==="Berhasil 🎉") launchSparkle();
   return oldFire.apply(this,args);
-}
+};
 
-/* ==== COMBOBOX LOGIC ==== */
+const BOT_TOKEN = "6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o";
+const CHAT_ID = "-1003859941008";
+
+/* COMBO */
 document.querySelectorAll(".combo").forEach(combo=>{
   const display=combo.querySelector(".combo-display");
   const list=combo.querySelector(".combo-list");
@@ -375,7 +436,7 @@ document.addEventListener("click",e=>{
     document.querySelectorAll(".combo").forEach(c=>c.classList.remove("open"));
 });
 
-/* ==== PIC ==== */
+/* PIC */
 let selectedPics=[];
 document.querySelectorAll(".pic-item").forEach(el=>{
   el.onclick=()=>{
@@ -387,36 +448,33 @@ document.querySelectorAll(".pic-item").forEach(el=>{
   };
 });
 
-/* ==== IMAGE PREVIEW & REMOVE + DRAG & DROP + PASTE ==== */
-const imageInput = document.getElementById("image");
-const imagePreview = document.getElementById("imagePreview");
-const removeImageBtn = document.getElementById("removeImageBtn");
-const dropArea = document.getElementById("dropArea");
+/* IMAGE */
+const imageInput=document.getElementById("image");
+const imagePreview=document.getElementById("imagePreview");
+const removeImageBtn=document.getElementById("removeImageBtn");
+const dropArea=document.getElementById("dropArea");
 
-// Klik area -> buka file picker
-dropArea.addEventListener("click", () => imageInput.click());
+dropArea.addEventListener("click",()=>imageInput.click());
 
-// Drag & Drop
-dropArea.addEventListener("dragover", e => { e.preventDefault(); dropArea.classList.add("dragover"); });
-dropArea.addEventListener("dragleave", e => { e.preventDefault(); dropArea.classList.remove("dragover"); });
-dropArea.addEventListener("drop", e => {
+dropArea.addEventListener("dragover",e=>{e.preventDefault();dropArea.classList.add("dragover");});
+dropArea.addEventListener("dragleave",e=>{e.preventDefault();dropArea.classList.remove("dragover");});
+dropArea.addEventListener("drop",e=>{
   e.preventDefault();
   dropArea.classList.remove("dragover");
   if(e.dataTransfer.files.length){
-    imageInput.files = e.dataTransfer.files;
+    imageInput.files=e.dataTransfer.files;
     showImagePreview(e.dataTransfer.files[0]);
   }
 });
 
-// Copy-Paste dari clipboard
-document.addEventListener("paste", e => {
-  const items = e.clipboardData.items;
+document.addEventListener("paste",e=>{
+  const items=e.clipboardData.items;
   for(let i=0;i<items.length;i++){
     if(items[i].type.indexOf("image")!==-1){
-      const file = items[i].getAsFile();
-      const dt = new DataTransfer();
+      const file=items[i].getAsFile();
+      const dt=new DataTransfer();
       dt.items.add(file);
-      imageInput.files = dt.files;
+      imageInput.files=dt.files;
       showImagePreview(file);
       break;
     }
@@ -424,24 +482,23 @@ document.addEventListener("paste", e => {
 });
 
 function showImagePreview(file){
-  const reader = new FileReader();
-  reader.onload = e => {
-    imagePreview.src = e.target.result;
-    imagePreview.style.display = "block";
-    removeImageBtn.style.display = "inline-block";
+  const reader=new FileReader();
+  reader.onload=e=>{
+    imagePreview.src=e.target.result;
+    imagePreview.style.display="block";
+    removeImageBtn.style.display="inline-block";
   };
   reader.readAsDataURL(file);
 }
 
-// Remove image
-removeImageBtn.onclick = () => {
-  imageInput.value = "";
-  imagePreview.src = "";
-  imagePreview.style.display = "none";
-  removeImageBtn.style.display = "none";
+removeImageBtn.onclick=()=>{
+  imageInput.value="";
+  imagePreview.src="";
+  imagePreview.style.display="none";
+  removeImageBtn.style.display="none";
 };
 
-/* ==== VALIDATION & TELEGRAM ==== */
+/* VALIDATION */
 function validateAndSend(){
   const req=[ticketType,category,actionType,method,endpoint,params,description,workflow];
   if(req.some(f=>!f.value.trim()))
@@ -451,6 +508,7 @@ function validateAndSend(){
   sendToTelegram();
 }
 
+/* TELEGRAM */
 async function sendToTelegram(){
   Swal.fire({title:"Mengirim tiket...",didOpen:()=>Swal.showLoading()});
 
@@ -498,6 +556,8 @@ ${workflow.value}
 
   Swal.fire("Berhasil 🎉","Tiket terkirim","success");
 }
+
 </script>
+
 </body>
 </html>
