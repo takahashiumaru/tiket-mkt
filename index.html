@@ -226,7 +226,28 @@ textarea{min-height:90px}
   border-radius:10px;
   cursor:pointer;
   background:#fff;
+  position: relative;
 }
+
+/* ICON BERBEDA PER THEME */
+html[data-theme="cny"] .combo-display::after{
+  content:"🧧"; /* Angpao untuk CNY */
+  position: absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  pointer-events: none;
+}
+
+html[data-theme="ramadhan"] .combo-display::after{
+  content:"✨"; /* Bintang untuk Ramadhan */
+  position: absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  pointer-events: none;
+}
+
 :root[data-mode="dark"] .combo-display{
   background:#1e293b;
   color:#fff;
