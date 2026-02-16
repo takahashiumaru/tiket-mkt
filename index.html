@@ -16,7 +16,7 @@
 const now = new Date();
 const year = now.getFullYear();
 
-/* CNY aktif sampai 29 Februari */
+/* CNY aktif sampai 12 Februari */
 const cnyEnd = new Date(year, 1, 18);
 
 if (now > cnyEnd) {
@@ -24,9 +24,37 @@ if (now > cnyEnd) {
 } else {
   document.documentElement.setAttribute("data-theme", "cny");
 }
+
+/* =========================
+   DARK MODE SYSTEM
+   ========================= */
+
+const userDarkPref = localStorage.getItem("darkMode");
+const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+if(userDarkPref === "true" || (userDarkPref === null && systemDark)){
+  document.documentElement.setAttribute("data-mode","dark");
+}else{
+  document.documentElement.setAttribute("data-mode","light");
+}
+
+function toggleDarkMode(){
+  const current = document.documentElement.getAttribute("data-mode");
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-mode", next);
+  localStorage.setItem("darkMode", next === "dark");
+  updateDarkIcon();
+}
+
+function updateDarkIcon(){
+  const btn = document.getElementById("darkToggle");
+  const mode = document.documentElement.getAttribute("data-mode");
+  btn.innerHTML = mode === "dark" ? "☀️ Light" : "🌙 Dark";
+}
 </script>
 
 <style>
+
 /* =========================
    ROOT THEME
    ========================= */
@@ -38,6 +66,7 @@ if (now > cnyEnd) {
   --bg1:#fff7ed;
   --bg2:#fee2e2;
   --border:#e5e7eb;
+  --text:#1f2937;
 }
 
 :root[data-theme="ramadhan"]{
@@ -47,9 +76,31 @@ if (now > cnyEnd) {
   --bg1:#ecfdf5;
   --bg2:#d1fae5;
   --border:#d1fae5;
+  --text:#1f2937;
 }
 
-/* RESET */
+/* =========================
+   DARK MODE FIX (TERANG)
+   ========================= */
+
+:root[data-mode="dark"]{
+  --text:#ffffff;
+  --text-soft:#f3f4f6;
+  --text-muted:#cbd5e1;
+}
+
+:root[data-mode="dark"][data-theme="cny"]{
+  --bg1:#120909;
+  --bg2:#1a0f0f;
+  --border:#3a1f1f;
+}
+
+:root[data-mode="dark"][data-theme="ramadhan"]{
+  --bg1:#052e2b;
+  --bg2:#063d38;
+  --border:#064e3b;
+}
+
 *{box-sizing:border-box}
 
 body{
@@ -60,9 +111,11 @@ body{
     linear-gradient(180deg,var(--bg1),var(--bg2));
   padding:24px;
   overflow-x:hidden;
+  transition:all .35s ease;
+  color:var(--text);
 }
 
-/* FLOATING DECORATION */
+/* FLOATING */
 .floating{
   position:fixed;
   top:-120px;
@@ -74,7 +127,6 @@ body{
   animation:float 6s ease-in-out infinite;
   z-index:1;
 }
-
 .floating::after{
   content:"";
   position:absolute;
@@ -85,7 +137,6 @@ body{
   background:var(--accent);
   transform:translateX(-50%);
 }
-
 .floating.left{left:40px}
 .floating.right{right:40px;animation-delay:2s}
 
@@ -105,7 +156,6 @@ body{
   animation:fall linear forwards;
   z-index:999;
 }
-
 @keyframes fall{
   to{
     transform:translateY(110vh);
@@ -117,24 +167,23 @@ body{
 .container{max-width:900px;margin:auto;position:relative;z-index:2}
 
 .card{
-  background:#fff;
+  background:#ffffff;
   border-radius:18px;
   padding:26px;
   box-shadow:0 20px 40px rgba(0,0,0,.12);
   border-top:6px solid var(--primary);
+  transition:all .35s ease;
 }
 
-h1{
-  margin-bottom:6px;
-  color:var(--primary-dark);
+:root[data-mode="dark"] .card{
+  background:#0f172a;
+  box-shadow:0 20px 60px rgba(0,0,0,.7);
 }
 
-.subtitle{
-  color:var(--primary);
-  margin-bottom:24px;
-  font-weight:500;
-}
+h1{margin-bottom:6px}
+.subtitle{margin-bottom:24px;font-weight:500}
 
+/* GRID */
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -146,15 +195,25 @@ label{
   font-weight:600;
   margin-bottom:6px;
   display:block;
-  color:var(--primary-dark);
+  color:var(--text-soft);
 }
 
+/* INPUT */
 input,textarea{
   width:100%;
   padding:10px 12px;
   border-radius:10px;
   border:1px solid var(--border);
   font-size:14px;
+  transition:all .35s ease;
+  color:var(--text);
+}
+
+:root[data-mode="dark"] input,
+:root[data-mode="dark"] textarea{
+  background:#1e293b;
+  color:#ffffff;
+  border:1px solid #334155;
 }
 
 textarea{min-height:90px}
@@ -168,15 +227,10 @@ textarea{min-height:90px}
   cursor:pointer;
   background:#fff;
 }
-
-:root[data-theme="cny"] .combo-display::after{
-  content:"🧧";
-  float:right;
-}
-
-:root[data-theme="ramadhan"] .combo-display::after{
-  content:"✨";
-  float:right;
+:root[data-mode="dark"] .combo-display{
+  background:#1e293b;
+  color:#fff;
+  border:1px solid #334155;
 }
 
 .combo-list{
@@ -191,45 +245,64 @@ textarea{min-height:90px}
   display:none;
   z-index:20;
 }
+:root[data-mode="dark"] .combo-list{
+  background:#1e293b;
+  border:1px solid #334155;
+  color:#fff;
+}
 .combo.open .combo-list{display:block}
-.combo-list div{
-  padding:12px 14px;
-  cursor:pointer;
-}
-.combo-list div:hover{
-  background:var(--bg2);
-}
+.combo-list div{padding:12px 14px;cursor:pointer}
+.combo-list div:hover{background:var(--bg2)}
 .combo-list div.active{
   background:var(--primary);
   color:#fff;
 }
-
-/* PIC */
+/* PIC NORMAL */
 .pic-container{display:flex;flex-wrap:wrap;gap:8px}
 .pic-item{
   padding:8px 16px;
   border-radius:999px;
   border:1px solid var(--border);
   cursor:pointer;
-}
-.pic-item.active{
-  background:var(--primary);
-  color:#fff;
-  border-color:var(--primary);
+  transition:.3s;
+  background:#fff;
+  color:#1f2937; /* teks hitam di light mode */
 }
 
-/* IMAGE */
+/* DARK MODE NORMAL */
+:root[data-mode="dark"] .pic-item{
+  background:#1e293b;       /* gelap */
+  border:1px solid #ffffff; /* border putih */
+  color:#ffffff;            /* teks putih */
+}
+
+/* ACTIVE FIX LIGHT MODE */
+.pic-item.active{
+  background:#f59e0b;       /* amber kontras di light mode */
+  border-color:#f59e0b;
+  color:#000000 !important; /* teks hitam jelas */
+}
+
+/* ACTIVE FIX DARK MODE */
+:root[data-mode="dark"] .pic-item.active{
+  background:#f59e0b;       /* amber kontras di dark mode */
+  border-color:#f59e0b;
+  color:#000000 !important; /* teks hitam jelas */
+}
+
+/* DROP AREA */
 #dropArea{
   border:2px dashed var(--primary);
   border-radius:14px;
   padding:20px;
   text-align:center;
   cursor:pointer;
-  color:var(--primary-dark);
 }
-#dropArea.dragover{
-  background:var(--bg2);
+:root[data-mode="dark"] #dropArea{
+  background:#1e293b;
+  color:#fff;
 }
+
 #imagePreview{
   max-width:100%;
   border-radius:12px;
@@ -237,6 +310,7 @@ textarea{min-height:90px}
   display:none;
   border:1px solid var(--border);
 }
+
 #removeImageBtn{
   display:none;
   margin-top:6px;
@@ -272,6 +346,10 @@ button:hover{opacity:.95}
 
 <div class="container">
 <div class="card">
+
+<div style="text-align:right;margin-bottom:10px;">
+  <button id="darkToggle" onclick="toggleDarkMode()" style="width:auto;padding:8px 14px;border-radius:999px;font-size:14px;"></button>
+</div>
 
 <h1 id="mainTitle"></h1>
 <div class="subtitle" id="subTitle"></div>
@@ -332,6 +410,17 @@ button:hover{opacity:.95}
 </div>
 
 <div>
+<label>Priority </label>
+<div class="combo" data-target="priority">
+<div class="combo-display">Low</div>
+<div class="combo-list">
+<div>Low</div><div>Normal</div><div>High</div><div>Urgent</div>
+</div>
+</div>
+<input type="hidden" id="priority" value="Low">
+</div>
+
+<div>
 <label>PIC *</label>
 <div class="pic-container">
 <div class="pic-item" data-pic="@arifinabd">Arifin</div>
@@ -374,190 +463,255 @@ button:hover{opacity:.95}
 
 <script>
 
-/* =========================
-   SET TITLE BASED ON THEME
-   ========================= */
-
-document.addEventListener("DOMContentLoaded",()=>{
-  const theme = document.documentElement.dataset.theme;
-
-  if(theme === "ramadhan"){
-    mainTitle.innerHTML = "🌙 Generator Tiket Dev";
-    subTitle.innerHTML = "Ramadhan Edition ✨";
-  }else{
-    mainTitle.innerHTML = "🧨 Generator Tiket Dev";
-    subTitle.innerHTML = "Chinese New Year Edition 🎊";
-  }
-});
-
-/* SPARKLE EFFECT */
-function launchSparkle(){
-  for(let i=0;i<40;i++){
-    const s=document.createElement("div");
-    s.className="sparkle";
-    s.style.left=Math.random()*100+"vw";
-    s.style.animationDuration=(Math.random()*2+2)+"s";
-    document.body.appendChild(s);
-    setTimeout(()=>s.remove(),4000);
-  }
-}
-
-/* Override Swal Success */
-const oldFire = Swal.fire;
-Swal.fire = function(...args){
-  if(args[0]==="Berhasil 🎉") launchSparkle();
-  return oldFire.apply(this,args);
-};
-
-const BOT_TOKEN = "6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o";
-const CHAT_ID = "-1003859941008";
-
-/* COMBO */
-document.querySelectorAll(".combo").forEach(combo=>{
-  const display=combo.querySelector(".combo-display");
-  const list=combo.querySelector(".combo-list");
-  const hidden=document.getElementById(combo.dataset.target);
-
-  display.onclick=()=>combo.classList.toggle("open");
-
-  list.querySelectorAll("div").forEach(item=>{
-    item.onclick=()=>{
-      display.textContent=item.textContent;
-      hidden.value=item.textContent;
-      list.querySelectorAll("div").forEach(i=>i.classList.remove("active"));
-      item.classList.add("active");
-      combo.classList.remove("open");
-    };
+  /* ===============================
+     INIT TITLE
+  =================================*/
+  document.addEventListener("DOMContentLoaded",()=>{
+    const theme = document.documentElement.dataset.theme;
+    const mainTitle = document.getElementById("mainTitle");
+    const subTitle = document.getElementById("subTitle");
+  
+    if(theme === "ramadhan"){
+      mainTitle.innerHTML = "🌙 Generator Tiket Dev";
+      subTitle.innerHTML = "Ramadhan Edition ✨";
+    }else{
+      mainTitle.innerHTML = "🧨 Generator Tiket Dev";
+      subTitle.innerHTML = "Chinese New Year Edition 🎊";
+    }
+  
+    updateDarkIcon();
   });
-});
-
-document.addEventListener("click",e=>{
-  if(!e.target.closest(".combo"))
-    document.querySelectorAll(".combo").forEach(c=>c.classList.remove("open"));
-});
-
-/* PIC */
-let selectedPics=[];
-document.querySelectorAll(".pic-item").forEach(el=>{
-  el.onclick=()=>{
-    const p=el.dataset.pic;
-    el.classList.toggle("active");
-    selectedPics.includes(p)
-      ? selectedPics=selectedPics.filter(x=>x!==p)
-      : selectedPics.push(p);
-  };
-});
-
-/* IMAGE */
-const imageInput=document.getElementById("image");
-const imagePreview=document.getElementById("imagePreview");
-const removeImageBtn=document.getElementById("removeImageBtn");
-const dropArea=document.getElementById("dropArea");
-
-dropArea.addEventListener("click",()=>imageInput.click());
-
-dropArea.addEventListener("dragover",e=>{e.preventDefault();dropArea.classList.add("dragover");});
-dropArea.addEventListener("dragleave",e=>{e.preventDefault();dropArea.classList.remove("dragover");});
-dropArea.addEventListener("drop",e=>{
-  e.preventDefault();
-  dropArea.classList.remove("dragover");
-  if(e.dataTransfer.files.length){
-    imageInput.files=e.dataTransfer.files;
-    showImagePreview(e.dataTransfer.files[0]);
-  }
-});
-
-document.addEventListener("paste",e=>{
-  const items=e.clipboardData.items;
-  for(let i=0;i<items.length;i++){
-    if(items[i].type.indexOf("image")!==-1){
-      const file=items[i].getAsFile();
-      const dt=new DataTransfer();
-      dt.items.add(file);
-      imageInput.files=dt.files;
-      showImagePreview(file);
-      break;
+  
+  
+  /* ===============================
+     SPARKLE
+  =================================*/
+  function launchSparkle(){
+    for(let i=0;i<40;i++){
+      const s=document.createElement("div");
+      s.className="sparkle";
+      s.style.left=Math.random()*100+"vw";
+      s.style.animationDuration=(Math.random()*2+2)+"s";
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(),4000);
     }
   }
-});
-
-function showImagePreview(file){
-  const reader=new FileReader();
-  reader.onload=e=>{
-    imagePreview.src=e.target.result;
-    imagePreview.style.display="block";
-    removeImageBtn.style.display="inline-block";
+  
+  const oldFire = Swal.fire;
+  Swal.fire = function(...args){
+    if(args[0]==="Berhasil 🎉") launchSparkle();
+    return oldFire.apply(this,args);
   };
-  reader.readAsDataURL(file);
-}
-
-removeImageBtn.onclick=()=>{
-  imageInput.value="";
-  imagePreview.src="";
-  imagePreview.style.display="none";
-  removeImageBtn.style.display="none";
-};
-
-/* VALIDATION */
-function validateAndSend(){
-  const req=[ticketType,category,actionType,method,endpoint,params,description,workflow];
-  if(req.some(f=>!f.value.trim()))
-    return Swal.fire("Oops","Semua field wajib diisi","warning");
-  if(!selectedPics.length)
-    return Swal.fire("PIC kosong","Pilih minimal 1 PIC","warning");
-  sendToTelegram();
-}
-
-/* TELEGRAM */
-async function sendToTelegram(){
-  Swal.fire({title:"Mengirim tiket...",didOpen:()=>Swal.showLoading()});
-
-  const caption=`
-🎫 *TIKET ${ticketType.value.toUpperCase()}*
-*Kategori*: ${category.value}
-
-*PIC*
-${selectedPics.join(" ")}
-
-*Action* : ${actionType.value}
-*Method* : ${method.value}
-
-*Endpoint*
-\`\`\`
-${endpoint.value}
-\`\`\`
-
-*Parameter*
-\`\`\`
-${params.value}
-\`\`\`
-
-*Deskripsi*
-${description.value}
-
-*Workflow*
-${workflow.value}
-`;
-
-  if(imageInput.files.length){
-    const fd=new FormData();
-    fd.append("chat_id",CHAT_ID);
-    fd.append("photo",imageInput.files[0]);
-    fd.append("caption",caption);
-    fd.append("parse_mode","Markdown");
-    await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendPhoto`,{method:"POST",body:fd});
-  }else{
-    await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendMessage`,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({chat_id:CHAT_ID,text:caption,parse_mode:"Markdown"})
+  
+  
+  /* ===============================
+     TELEGRAM CONFIG
+  =================================*/
+  const BOT_TOKEN = "6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o";
+  const CHAT_ID = "-1003521971868";
+  
+  
+  /* ===============================
+     COMBOBOX FIX (INI YANG ERROR)
+  =================================*/
+  
+  document.querySelectorAll(".combo").forEach(combo=>{
+    const display = combo.querySelector(".combo-display");
+    const list = combo.querySelector(".combo-list");
+    const hidden = document.getElementById(combo.dataset.target);
+  
+    display.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      document.querySelectorAll(".combo").forEach(c=>{
+        if(c !== combo) c.classList.remove("open");
+      });
+      combo.classList.toggle("open");
     });
+  
+    list.querySelectorAll("div").forEach(item=>{
+      item.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        display.textContent = item.textContent;
+        hidden.value = item.textContent;
+  
+        list.querySelectorAll("div").forEach(i=>i.classList.remove("active"));
+        item.classList.add("active");
+  
+        combo.classList.remove("open");
+      });
+    });
+  });
+  
+  /* klik luar tutup */
+  document.addEventListener("click", ()=>{
+    document.querySelectorAll(".combo").forEach(c=>c.classList.remove("open"));
+  });
+  
+  
+  /* ===============================
+     PIC SELECT
+  =================================*/
+  let selectedPics=[];
+  document.querySelectorAll(".pic-item").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      const p=el.dataset.pic;
+      el.classList.toggle("active");
+      selectedPics.includes(p)
+        ? selectedPics=selectedPics.filter(x=>x!==p)
+        : selectedPics.push(p);
+    });
+  });
+  
+  
+  /* ===============================
+     IMAGE UPLOAD
+  =================================*/
+  const imageInput=document.getElementById("image");
+  const imagePreview=document.getElementById("imagePreview");
+  const removeImageBtn=document.getElementById("removeImageBtn");
+  const dropArea=document.getElementById("dropArea");
+  
+  dropArea.addEventListener("click",()=>imageInput.click());
+  
+  dropArea.addEventListener("dragover",e=>{
+    e.preventDefault();
+  });
+  
+  dropArea.addEventListener("drop",e=>{
+    e.preventDefault();
+    if(e.dataTransfer.files.length){
+      imageInput.files=e.dataTransfer.files;
+      showImagePreview(e.dataTransfer.files[0]);
+    }
+  });
+  
+  document.addEventListener("paste",e=>{
+    const items=e.clipboardData.items;
+    for(let i=0;i<items.length;i++){
+      if(items[i].type.indexOf("image")!==-1){
+        const file=items[i].getAsFile();
+        const dt=new DataTransfer();
+        dt.items.add(file);
+        imageInput.files=dt.files;
+        showImagePreview(file);
+        break;
+      }
+    }
+  });
+  
+  function showImagePreview(file){
+    const reader=new FileReader();
+    reader.onload=e=>{
+      imagePreview.src=e.target.result;
+      imagePreview.style.display="block";
+      removeImageBtn.style.display="inline-block";
+    };
+    reader.readAsDataURL(file);
   }
-
-  Swal.fire("Berhasil 🎉","Tiket terkirim","success");
-}
-
-</script>
+  
+  removeImageBtn.onclick=()=>{
+    imageInput.value="";
+    imagePreview.src="";
+    imagePreview.style.display="none";
+    removeImageBtn.style.display="none";
+  };
+  
+  
+  /* ===============================
+     VALIDATION
+  =================================*/
+  function validateAndSend(){
+    const ticketType=document.getElementById("ticketType");
+    const category=document.getElementById("category");
+    const actionType=document.getElementById("actionType");
+    const method=document.getElementById("method");
+    const priority=document.getElementById("method");
+    const endpoint=document.getElementById("priority");
+    const params=document.getElementById("params");
+    const description=document.getElementById("description");
+    const workflow=document.getElementById("workflow");
+  
+    const req=[ticketType,category,actionType,method,priority,endpoint,params,description,workflow];
+  
+    if(req.some(f=>!f.value.trim()))
+      return Swal.fire("Oops","Semua field wajib diisi","warning");
+  
+    if(!selectedPics.length)
+      return Swal.fire("PIC kosong","Pilih minimal 1 PIC","warning");
+  
+    sendToTelegram();
+  }
+  
+  
+  /* ===============================
+     SEND TELEGRAM
+  =================================*/
+  async function sendToTelegram(){
+  
+    const ticketType=document.getElementById("ticketType");
+    const category=document.getElementById("category");
+    const actionType=document.getElementById("actionType");
+    const method=document.getElementById("method");
+    const priority=document.getElementById("priority");
+    const endpoint=document.getElementById("endpoint");
+    const params=document.getElementById("params");
+    const description=document.getElementById("description");
+    const workflow=document.getElementById("workflow");
+  
+    Swal.fire({title:"Mengirim tiket...",didOpen:()=>Swal.showLoading()});
+  
+    const caption=`
+  🎫 *TIKET ${ticketType.value.toUpperCase()}*
+  *Kategori*: ${category.value}
+  
+  *PIC*
+  ${selectedPics.join(" ")}
+  
+  *Action* : ${actionType.value}
+  *Method* : ${method.value}
+  *Priority* : ${priority.value}
+  
+  *Endpoint*
+  \`\`\`
+  ${endpoint.value}
+  \`\`\`
+  
+  *Parameter*
+  \`\`\`
+  ${params.value}
+  \`\`\`
+  
+  *Deskripsi*
+  ${description.value}
+  
+  *Workflow*
+  ${workflow.value}
+  `;
+  
+    if(imageInput.files.length){
+      const fd=new FormData();
+      fd.append("chat_id",CHAT_ID);
+      fd.append("photo",imageInput.files[0]);
+      fd.append("caption",caption);
+      fd.append("parse_mode","Markdown");
+    await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendPhoto`,{method:"POST",body:fd});
+    }else{
+    await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendMessage`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          chat_id:CHAT_ID,
+          text:caption,
+          parse_mode:"Markdown"
+        })
+      });
+    }
+  
+    Swal.fire("Berhasil 🎉","Tiket terkirim","success");
+  }
+  
+  </script>
+  
 
 </body>
 </html>
