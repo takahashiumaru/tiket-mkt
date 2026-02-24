@@ -1,687 +1,981 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>Tiket MKT</title>
-<link rel="icon" type="image/png" href="favicon.png">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <title>Tiket MKT</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-/* =========================
-   AUTO THEME SWITCH
-   ========================= */
+  <script>
+    /* =========================
+       AUTO THEME SWITCH
+       ========================= */
 
-const now = new Date();
-const year = now.getFullYear();
+    const now = new Date();
+    const year = now.getFullYear();
 
-/* CNY aktif sampai 12 Februari */
-const cnyEnd = new Date(year, 1, 18);
+    /* CNY aktif sampai 12 Februari */
+    const cnyEnd = new Date(year, 1, 18);
 
-if (now > cnyEnd) {
-  document.documentElement.setAttribute("data-theme", "ramadhan");
-} else {
-  document.documentElement.setAttribute("data-theme", "cny");
-}
+    if (now > cnyEnd) {
+      document.documentElement.setAttribute("data-theme", "ramadhan");
+    } else {
+      document.documentElement.setAttribute("data-theme", "cny");
+    }
 
-/* =========================
-   DARK MODE SYSTEM
-   ========================= */
+    /* =========================
+       DARK MODE SYSTEM
+       ========================= */
 
-const userDarkPref = localStorage.getItem("darkMode");
-const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const userDarkPref = localStorage.getItem("darkMode");
+    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-if(userDarkPref === "true" || (userDarkPref === null && systemDark)){
-  document.documentElement.setAttribute("data-mode","dark");
-}else{
-  document.documentElement.setAttribute("data-mode","light");
-}
+    if (userDarkPref === "true" || (userDarkPref === null && systemDark)) {
+      document.documentElement.setAttribute("data-mode", "dark");
+    } else {
+      document.documentElement.setAttribute("data-mode", "light");
+    }
 
-function toggleDarkMode(){
-  const current = document.documentElement.getAttribute("data-mode");
-  const next = current === "dark" ? "light" : "dark";
-  document.documentElement.setAttribute("data-mode", next);
-  localStorage.setItem("darkMode", next === "dark");
-  updateDarkIcon();
-}
+    function toggleDarkMode() {
+      const current = document.documentElement.getAttribute("data-mode");
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-mode", next);
+      localStorage.setItem("darkMode", next === "dark");
+      updateDarkIcon();
+    }
 
-function updateDarkIcon(){
-  const btn = document.getElementById("darkToggle");
-  const mode = document.documentElement.getAttribute("data-mode");
-  btn.innerHTML = mode === "dark" ? "☀️ Light" : "🌙 Dark";
-}
-</script>
+    function updateDarkIcon() {
+      const btn = document.getElementById("darkToggle");
+      const mode = document.documentElement.getAttribute("data-mode");
+      btn.innerHTML = mode === "dark" ? "☀️ Light" : "🌙 Dark";
+    }
+  </script>
 
-<style>
-
-/* =========================
+  <style>
+    /* =========================
    ROOT THEME
    ========================= */
 
-:root[data-theme="cny"]{
-  --primary:#b91c1c;
-  --primary-dark:#7f1d1d;
-  --accent:#facc15;
-  --bg1:#fff7ed;
-  --bg2:#fee2e2;
-  --border:#e5e7eb;
-  --text:#1f2937;
-}
+    :root[data-theme="cny"] {
+      --primary: #b91c1c;
+      --primary-dark: #7f1d1d;
+      --accent: #facc15;
+      --bg1: #fff7ed;
+      --bg2: #fee2e2;
+      --border: #e5e7eb;
+      --text: #1f2937;
+    }
 
-:root[data-theme="ramadhan"]{
-  --primary:#065f46;
-  --primary-dark:#047857;
-  --accent:#facc15;
-  --bg1:#ecfdf5;
-  --bg2:#d1fae5;
-  --border:#d1fae5;
-  --text:#1f2937;
-}
+    :root[data-theme="ramadhan"] {
+      --primary: #065f46;
+      --primary-dark: #047857;
+      --accent: #facc15;
+      --bg1: #ecfdf5;
+      --bg2: #d1fae5;
+      --border: #d1fae5;
+      --text: #1f2937;
+    }
 
-/* =========================
+    /* =========================
    DARK MODE FIX (TERANG)
    ========================= */
 
-:root[data-mode="dark"]{
-  --text:#ffffff;
-  --text-soft:#f3f4f6;
-  --text-muted:#cbd5e1;
-}
+    :root[data-mode="dark"] {
+      --text: #ffffff;
+      --text-soft: #f3f4f6;
+      --text-muted: #cbd5e1;
+    }
 
-:root[data-mode="dark"][data-theme="cny"]{
-  --bg1:#120909;
-  --bg2:#1a0f0f;
-  --border:#3a1f1f;
-}
+    :root[data-mode="dark"][data-theme="cny"] {
+      --bg1: #120909;
+      --bg2: #1a0f0f;
+      --border: #3a1f1f;
+    }
 
-:root[data-mode="dark"][data-theme="ramadhan"]{
-  --bg1:#052e2b;
-  --bg2:#063d38;
-  --border:#064e3b;
-}
+    :root[data-mode="dark"][data-theme="ramadhan"] {
+      --bg1: #052e2b;
+      --bg2: #063d38;
+      --border: #064e3b;
+    }
 
-*{box-sizing:border-box}
+    * {
+      box-sizing: border-box
+    }
 
-body{
-  margin:0;
-  font-family:Inter,system-ui,sans-serif;
-  background:
-    radial-gradient(circle at top,var(--bg2) 0%,transparent 40%),
-    linear-gradient(180deg,var(--bg1),var(--bg2));
-  padding:24px;
-  overflow-x:hidden;
-  transition:all .35s ease;
-  color:var(--text);
-}
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top, var(--bg2) 0%, transparent 40%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      padding: 24px;
+      overflow-x: hidden;
+      transition: all .35s ease;
+      color: var(--text);
+    }
 
-/* FLOATING */
-.floating{
-  position:fixed;
-  top:-120px;
-  width:80px;
-  height:100px;
-  background:linear-gradient(180deg,var(--primary),var(--primary-dark));
-  border-radius:40px;
-  box-shadow:0 0 25px rgba(0,0,0,.2);
-  animation:float 6s ease-in-out infinite;
-  z-index:1;
-}
-.floating::after{
-  content:"";
-  position:absolute;
-  bottom:-14px;
-  left:50%;
-  width:6px;
-  height:14px;
-  background:var(--accent);
-  transform:translateX(-50%);
-}
-.floating.left{left:40px}
-.floating.right{right:40px;animation-delay:2s}
+    /* FLOATING */
+    .floating {
+      position: fixed;
+      top: -120px;
+      width: 80px;
+      height: 100px;
+      background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+      border-radius: 40px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, .2);
+      animation: float 6s ease-in-out infinite;
+      z-index: 1;
+    }
 
-@keyframes float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(40px)}
-}
+    .floating::after {
+      content: "";
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      width: 6px;
+      height: 14px;
+      background: var(--accent);
+      transform: translateX(-50%);
+    }
 
-/* SPARKLE */
-.sparkle{
-  position:fixed;
-  width:6px;
-  height:6px;
-  background:var(--accent);
-  border-radius:50%;
-  top:-10px;
-  animation:fall linear forwards;
-  z-index:999;
-}
-@keyframes fall{
-  to{
-    transform:translateY(110vh);
-    opacity:0;
-  }
-}
+    .floating.left {
+      left: 40px
+    }
 
-/* LAYOUT */
-.container{max-width:900px;margin:auto;position:relative;z-index:2}
+    .floating.right {
+      right: 40px;
+      animation-delay: 2s
+    }
 
-.card{
-  background:#ffffff;
-  border-radius:18px;
-  padding:26px;
-  box-shadow:0 20px 40px rgba(0,0,0,.12);
-  border-top:6px solid var(--primary);
-  transition:all .35s ease;
-}
+    @keyframes float {
 
-:root[data-mode="dark"] .card{
-  background:#0f172a;
-  box-shadow:0 20px 60px rgba(0,0,0,.7);
-}
+      0%,
+      100% {
+        transform: translateY(0)
+      }
 
-h1{margin-bottom:6px}
-.subtitle{margin-bottom:24px;font-weight:500}
+      50% {
+        transform: translateY(40px)
+      }
+    }
 
-/* GRID */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:16px;
-}
+    /* SPARKLE */
+    .sparkle {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      top: -10px;
+      animation: fall linear forwards;
+      z-index: 999;
+    }
 
-label{
-  font-size:13px;
-  font-weight:600;
-  margin-bottom:6px;
-  display:block;
-  color:var(--text-soft);
-}
+    @keyframes fall {
+      to {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
 
-/* INPUT */
-input,textarea{
-  width:100%;
-  padding:10px 12px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  font-size:14px;
-  transition:all .35s ease;
-  color:var(--text);
-}
+    /* LAYOUT */
+    .container {
+      max-width: 900px;
+      margin: auto;
+      position: relative;
+      z-index: 2
+    }
 
-:root[data-mode="dark"] input,
-:root[data-mode="dark"] textarea{
-  background:#1e293b;
-  color:#ffffff;
-  border:1px solid #334155;
-}
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 26px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, .12);
+      border-top: 6px solid var(--primary);
+      transition: all .35s ease;
+    }
 
-textarea{min-height:90px}
+    :root[data-mode="dark"] .card {
+      background: #0f172a;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .7);
+    }
 
-/* COMBO */
-.combo{position:relative}
-.combo-display{
-  padding:10px 12px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  cursor:pointer;
-  background:#fff;
-  position: relative;
-}
+    h1 {
+      margin-bottom: 6px
+    }
 
-/* ICON BERBEDA PER THEME */
-html[data-theme="cny"] .combo-display::after{
-  content:"🧧"; /* Angpao untuk CNY */
-  position: absolute;
-  right:12px;
-  top:50%;
-  transform:translateY(-50%);
-  pointer-events: none;
-}
+    .subtitle {
+      margin-bottom: 24px;
+      font-weight: 500
+    }
 
-html[data-theme="ramadhan"] .combo-display::after{
-  content:"✨"; /* Bintang untuk Ramadhan */
-  position: absolute;
-  right:12px;
-  top:50%;
-  transform:translateY(-50%);
-  pointer-events: none;
-}
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
 
-:root[data-mode="dark"] .combo-display{
-  background:#1e293b;
-  color:#fff;
-  border:1px solid #334155;
-}
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+      color: var(--text-soft);
+    }
 
-.combo-list{
-  position:absolute;
-  top:110%;
-  left:0;
-  right:0;
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:12px;
-  box-shadow:0 12px 30px rgba(0,0,0,.15);
-  display:none;
-  z-index:20;
-}
-:root[data-mode="dark"] .combo-list{
-  background:#1e293b;
-  border:1px solid #334155;
-  color:#fff;
-}
-.combo.open .combo-list{display:block}
-.combo-list div{padding:12px 14px;cursor:pointer}
-.combo-list div:hover{background:var(--bg2)}
-.combo-list div.active{
-  background:var(--primary);
-  color:#fff;
-}
-/* PIC NORMAL */
-.pic-container{display:flex;flex-wrap:wrap;gap:8px}
-.pic-item{
-  padding:8px 16px;
-  border-radius:999px;
-  border:1px solid var(--border);
-  cursor:pointer;
-  transition:.3s;
-  background:#fff;
-  color:#1f2937; /* teks hitam di light mode */
-}
+    /* INPUT */
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      transition: all .35s ease;
+      color: var(--text);
+    }
 
-/* DARK MODE NORMAL */
-:root[data-mode="dark"] .pic-item{
-  background:#1e293b;       /* gelap */
-  border:1px solid #ffffff; /* border putih */
-  color:#ffffff;            /* teks putih */
-}
+    :root[data-mode="dark"] input,
+    :root[data-mode="dark"] textarea {
+      background: #1e293b;
+      color: #ffffff;
+      border: 1px solid #334155;
+    }
 
-/* ACTIVE FIX LIGHT MODE */
-.pic-item.active{
-  background:#f59e0b;       /* amber kontras di light mode */
-  border-color:#f59e0b;
-  color:#000000 !important; /* teks hitam jelas */
-}
+    textarea {
+      min-height: 150px
+    }
 
-/* ACTIVE FIX DARK MODE */
-:root[data-mode="dark"] .pic-item.active{
-  background:#f59e0b;       /* amber kontras di dark mode */
-  border-color:#f59e0b;
-  color:#000000 !important; /* teks hitam jelas */
-}
+    /* COMBO */
+    .combo {
+      position: relative
+    }
 
-/* DROP AREA */
-#dropArea{
-  border:2px dashed var(--primary);
-  border-radius:14px;
-  padding:20px;
-  text-align:center;
-  cursor:pointer;
-}
-:root[data-mode="dark"] #dropArea{
-  background:#1e293b;
-  color:#fff;
-}
+    .combo-display {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      background: #fff;
+      position: relative;
+    }
 
-#imagePreview{
-  max-width:100%;
-  border-radius:12px;
-  margin-top:8px;
-  display:none;
-  border:1px solid var(--border);
-}
+    /* ICON BERBEDA PER THEME */
+    html[data-theme="cny"] .combo-display::after {
+      content: "🧧";
+      /* Angpao untuk CNY */
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
 
-#removeImageBtn{
-  display:none;
-  margin-top:6px;
-  padding:6px 12px;
-  border:none;
-  background:var(--primary-dark);
-  color:#fff;
-  border-radius:8px;
-  cursor:pointer;
-}
+    html[data-theme="ramadhan"] .combo-display::after {
+      content: "✨";
+      /* Bintang untuk Ramadhan */
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
 
-/* BUTTON */
-button{
-  width:100%;
-  padding:16px;
-  border-radius:14px;
-  border:none;
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  color:#fff;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-}
-button:hover{opacity:.95}
+    :root[data-mode="dark"] .combo-display {
+      background: #1e293b;
+      color: #fff;
+      border: 1px solid #334155;
+    }
 
-</style>
+    .combo-list {
+      position: absolute;
+      top: 110%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .15);
+      display: none;
+      z-index: 20;
+    }
+
+    :root[data-mode="dark"] .combo-list {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #fff;
+    }
+
+    .combo.open .combo-list {
+      display: block
+    }
+
+    .combo-list div {
+      padding: 12px 14px;
+      cursor: pointer
+    }
+
+    .combo-list div:hover {
+      background: var(--bg2)
+    }
+
+    .combo-list div.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* PIC NORMAL */
+    .pic-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px
+    }
+
+    .pic-item {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: .3s;
+      background: #fff;
+      color: #1f2937;
+      /* teks hitam di light mode */
+    }
+
+    /* DARK MODE NORMAL */
+    :root[data-mode="dark"] .pic-item {
+      background: #1e293b;
+      /* gelap */
+      border: 1px solid #ffffff;
+      /* border putih */
+      color: #ffffff;
+      /* teks putih */
+    }
+
+    /* ACTIVE FIX LIGHT MODE */
+    .pic-item.active {
+      background: #f59e0b;
+      /* amber kontras di light mode */
+      border-color: #f59e0b;
+      color: #000000 !important;
+      /* teks hitam jelas */
+    }
+
+    /* ACTIVE FIX DARK MODE */
+    :root[data-mode="dark"] .pic-item.active {
+      background: #f59e0b;
+      /* amber kontras di dark mode */
+      border-color: #f59e0b;
+      color: #000000 !important;
+      /* teks hitam jelas */
+    }
+
+    /* DROP AREA */
+    #dropArea {
+      border: 2px dashed var(--primary);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    :root[data-mode="dark"] #dropArea {
+      background: #1e293b;
+      color: #fff;
+    }
+
+    #imagePreview {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-top: 8px;
+      display: none;
+      border: 1px solid var(--border);
+    }
+
+    #removeImageBtn {
+      display: none;
+      margin-top: 6px;
+      padding: 6px 12px;
+      border: none;
+      background: var(--primary-dark);
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* BUTTON */
+    button {
+      width: 100%;
+      padding: 16px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: .95
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="floating left"></div>
-<div class="floating right"></div>
+  <div class="floating left"></div>
+  <div class="floating right"></div>
 
-<div class="container">
-<div class="card">
+  <div class="container">
+    <div class="card">
 
-<div style="text-align:right;margin-bottom:10px;">
-  <button id="darkToggle" onclick="toggleDarkMode()" style="width:auto;padding:8px 14px;border-radius:999px;font-size:14px;"></button>
-</div>
+      <div style="text-align:right;margin-bottom:10px;">
+        <button id="darkToggle" onclick="toggleDarkMode()"
+          style="width:auto;padding:8px 14px;border-radius:999px;font-size:14px;"></button>
+      </div>
 
-<h1 id="mainTitle"></h1>
-<div class="subtitle" id="subTitle"></div>
+      <h1 id="mainTitle"></h1>
+      <div class="subtitle" id="subTitle"></div>
 
-<div class="grid">
+      <div class="grid">
 
-<div>
-<label>Jenis Tiket *</label>
-<div class="combo" data-target="ticketType">
-<div class="combo-display">Pilih</div>
-<div class="combo-list">
-<div>Backend</div>
-<div>Frontend</div>
-<div>Quality Assurance</div>
-</div>
-</div>
-<input type="hidden" id="ticketType">
-</div>
+        <div>
+          <label>Jenis Tiket *</label>
+          <div class="combo" data-target="ticketType">
+            <div class="combo-display">Pilih</div>
+            <div class="combo-list">
+              <div>Backend</div>
+              <div>Frontend</div>
+              <div>Quality Assurance</div>
+            </div>
+          </div>
+          <input type="hidden" id="ticketType">
+        </div>
 
-<div>
-<label>Kategori *</label>
-<div class="combo" data-target="category">
-<div class="combo-display">Pilih</div>
-<div class="combo-list">
-<div>New Feature</div>
-<div>Revision Feature</div>
-<div>Cek Data</div>
-<div>Bug</div>
-<div>Error</div>
-</div>
-</div>
-<input type="hidden" id="category">
-</div>
+        <div>
+          <label>Kategori *</label>
+          <div class="combo" data-target="category">
+            <div class="combo-display">Pilih</div>
+            <div class="combo-list">
+              <div>New Feature</div>
+              <div>Revision Feature</div>
+              <div>Cek Data</div>
+              <div>Bug</div>
+              <div>Error</div>
+            </div>
+          </div>
+          <input type="hidden" id="category">
+        </div>
 
-<div>
-<label>Action *</label>
-<div class="combo" data-target="actionType">
-<div class="combo-display">Pilih</div>
-<div class="combo-list">
-<div>View</div><div>Create</div><div>Update</div>
-<div>Delete</div><div>Print Excel</div><div>Print PDF</div>
-<div>CRUD</div>
-</div>
-</div>
-<input type="hidden" id="actionType">
-</div>
+        <div>
+          <label>Action *</label>
+          <div class="combo" data-target="actionType">
+            <div class="combo-display">Pilih</div>
+            <div class="combo-list">
+              <div>View</div>
+              <div>Create</div>
+              <div>Update</div>
+              <div>Delete</div>
+              <div>Print Excel</div>
+              <div>Print PDF</div>
+              <div>CRUD</div>
+            </div>
+          </div>
+          <input type="hidden" id="actionType">
+        </div>
 
-<div>
-<label>HTTP Method *</label>
-<div class="combo" data-target="method">
-<div class="combo-display">Pilih</div>
-<div class="combo-list">
-<div>GET</div><div>POST</div><div>PUT</div><div>DELETE</div>
-<div>CRUD</div>
-</div>
-</div>
-<input type="hidden" id="method">
-</div>
+        <div>
+          <label>HTTP Method *</label>
+          <div class="combo" data-target="method">
+            <div class="combo-display">Pilih</div>
+            <div class="combo-list">
+              <div>GET</div>
+              <div>POST</div>
+              <div>PUT</div>
+              <div>DELETE</div>
+              <div>CRUD</div>
+            </div>
+          </div>
+          <input type="hidden" id="method">
+        </div>
 
-<div>
-<label>Priority </label>
-<div class="combo" data-target="priority">
-<div class="combo-display">Low</div>
-<div class="combo-list">
-<div>Low</div><div>Normal</div><div>High</div><div>Urgent</div>
-</div>
-</div>
-<input type="hidden" id="priority" value="Low">
-</div>
+        <div>
+          <label>Priority </label>
+          <div class="combo" data-target="priority">
+            <div class="combo-display">Low</div>
+            <div class="combo-list">
+              <div>Low</div>
+              <div>Normal</div>
+              <div>High</div>
+              <div>Urgent</div>
+            </div>
+          </div>
+          <input type="hidden" id="priority" value="Low">
+        </div>
 
-<div>
-<label>PIC *</label>
-<div class="pic-container">
-<div class="pic-item" data-pic="@arifinabd">Arifin</div>
-<div class="pic-item" data-pic="@Umarxch">Umar</div>
-<div class="pic-item" data-pic="@Rmakie">Pak Ridwan</div>
-</div>
-</div>
+        <div>
+          <label>PIC *</label>
+          <div class="pic-container">
+            <div class="pic-item" data-pic="@arifinabd">Arifin</div>
+            <div class="pic-item" data-pic="@Umarxch">Umar</div>
+            <div class="pic-item" data-pic="@Rmakie">Pak Ridwan</div>
+          </div>
+        </div>
 
-</div>
+      </div>
 
-<br>
+      <br>
 
-<label>Endpoint *</label>
-<input id="endpoint">
+      <label>Endpoint *</label>
+      <input id="endpoint">
 
-<label style="margin-top:12px">Parameter *</label>
-<textarea id="params"></textarea>
+      <label style="margin-top:12px">Parameter *</label>
+      <textarea id="params"></textarea>
 
-<br>
-<label>Deskripsi *</label>
-<textarea id="description"></textarea>
+      <br>
+      <label>Deskripsi *</label>
+      <textarea id="description"></textarea>
 
-<br>
-<label>Workflow *</label>
-<textarea id="workflow"></textarea>
+      <br>
+      <label>Workflow *</label>
+      <textarea id="workflow"></textarea>
 
-<br>
-<label>Upload Gambar (Opsional)</label>
-<div id="dropArea">Tarik & lepas gambar di sini atau klik / paste (Ctrl+V)</div>
-<input type="file" id="image" accept="image/*" style="display:none">
-<img id="imagePreview">
-<button id="removeImageBtn">Hapus Gambar</button>
+      <br>
+      <label>Upload Gambar (Opsional)</label>
+      <div id="dropArea">Tarik & lepas gambar di sini atau klik / paste (Ctrl+V)</div>
+      <input type="file" id="image" accept="image/*" style="display:none">
+      <img id="imagePreview">
+      <button id="removeImageBtn">Hapus Gambar</button>
 
-<br><br>
+      <br><br>
 
-<button onclick="validateAndSend()">🚀 Kirim Tiket</button>
+      <button onclick="validateAndSend()">🚀 Kirim Tiket</button>
 
-</div>
-</div>
+    </div>
+  </div>
 
-<script>
 
-  /* ===============================
-     INIT TITLE
-  =================================*/
-  document.addEventListener("DOMContentLoaded",()=>{
-    const theme = document.documentElement.dataset.theme;
-    const mainTitle = document.getElementById("mainTitle");
-    const subTitle = document.getElementById("subTitle");
-  
-    if(theme === "ramadhan"){
-      mainTitle.innerHTML = "🌙 Generator Tiket Dev";
-      subTitle.innerHTML = "Ramadhan Edition ✨";
-    }else{
-      mainTitle.innerHTML = "🧨 Generator Tiket Dev";
-      subTitle.innerHTML = "Chinese New Year Edition 🎊";
-    }
-  
-    updateDarkIcon();
-  });
-  
-  
-  /* ===============================
-     SPARKLE
-  =================================*/
-  function launchSparkle(){
-    for(let i=0;i<40;i++){
-      const s=document.createElement("div");
-      s.className="sparkle";
-      s.style.left=Math.random()*100+"vw";
-      s.style.animationDuration=(Math.random()*2+2)+"s";
-      document.body.appendChild(s);
-      setTimeout(()=>s.remove(),4000);
-    }
-  }
-  
-  const oldFire = Swal.fire;
-  Swal.fire = function(...args){
-    if(args[0]==="Berhasil 🎉") launchSparkle();
-    return oldFire.apply(this,args);
-  };
-  
-  
-  /* ===============================
-     TELEGRAM CONFIG
-  =================================*/
-  const BOT_TOKEN = "6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o";
-  const CHAT_ID = "-1003521971868";
-  
-  
-  /* ===============================
-     COMBOBOX FIX (INI YANG ERROR)
-  =================================*/
-  
-  document.querySelectorAll(".combo").forEach(combo=>{
-    const display = combo.querySelector(".combo-display");
-    const list = combo.querySelector(".combo-list");
-    const hidden = document.getElementById(combo.dataset.target);
-  
-    display.addEventListener("click", (e)=>{
-      e.stopPropagation();
-      document.querySelectorAll(".combo").forEach(c=>{
-        if(c !== combo) c.classList.remove("open");
-      });
-      combo.classList.toggle("open");
+  <script>
+
+    /* ===============================
+       INIT TITLE
+    =================================*/
+    document.addEventListener("DOMContentLoaded", () => {
+      const theme = document.documentElement.dataset.theme;
+      const mainTitle = document.getElementById("mainTitle");
+      const subTitle = document.getElementById("subTitle");
+
+      if (theme === "ramadhan") {
+        mainTitle.innerHTML = "🌙 Generator Tiket Dev";
+        subTitle.innerHTML = "Ramadhan Edition ✨";
+      } else {
+        mainTitle.innerHTML = "🧨 Generator Tiket Dev";
+        subTitle.innerHTML = "Chinese New Year Edition 🎊";
+      }
+
+      updateDarkIcon();
     });
-  
-    list.querySelectorAll("div").forEach(item=>{
-      item.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        display.textContent = item.textContent;
-        hidden.value = item.textContent;
-  
-        list.querySelectorAll("div").forEach(i=>i.classList.remove("active"));
-        item.classList.add("active");
-  
-        combo.classList.remove("open");
-      });
-    });
-  });
-  
-  /* klik luar tutup */
-  document.addEventListener("click", ()=>{
-    document.querySelectorAll(".combo").forEach(c=>c.classList.remove("open"));
-  });
-  
-  
-  /* ===============================
-     PIC SELECT
-  =================================*/
-  let selectedPics=[];
-  document.querySelectorAll(".pic-item").forEach(el=>{
-    el.addEventListener("click", ()=>{
-      const p=el.dataset.pic;
-      el.classList.toggle("active");
-      selectedPics.includes(p)
-        ? selectedPics=selectedPics.filter(x=>x!==p)
-        : selectedPics.push(p);
-    });
-  });
-  
-  
-  /* ===============================
-     IMAGE UPLOAD
-  =================================*/
-  const imageInput=document.getElementById("image");
-  const imagePreview=document.getElementById("imagePreview");
-  const removeImageBtn=document.getElementById("removeImageBtn");
-  const dropArea=document.getElementById("dropArea");
-  
-  dropArea.addEventListener("click",()=>imageInput.click());
-  
-  dropArea.addEventListener("dragover",e=>{
-    e.preventDefault();
-  });
-  
-  dropArea.addEventListener("drop",e=>{
-    e.preventDefault();
-    if(e.dataTransfer.files.length){
-      imageInput.files=e.dataTransfer.files;
-      showImagePreview(e.dataTransfer.files[0]);
-    }
-  });
-  
-  document.addEventListener("paste",e=>{
-    const items=e.clipboardData.items;
-    for(let i=0;i<items.length;i++){
-      if(items[i].type.indexOf("image")!==-1){
-        const file=items[i].getAsFile();
-        const dt=new DataTransfer();
-        dt.items.add(file);
-        imageInput.files=dt.files;
-        showImagePreview(file);
-        break;
+
+
+    /* ===============================
+       SPARKLE
+    =================================*/
+    function launchSparkle() {
+      for (let i = 0; i < 40; i++) {
+        const s = document.createElement("div");
+        s.className = "sparkle";
+        s.style.left = Math.random() * 100 + "vw";
+        s.style.animationDuration = (Math.random() * 2 + 2) + "s";
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 4000);
       }
     }
-  });
-  
-  function showImagePreview(file){
-    const reader=new FileReader();
-    reader.onload=e=>{
-      imagePreview.src=e.target.result;
-      imagePreview.style.display="block";
-      removeImageBtn.style.display="inline-block";
+
+    const oldFire = Swal.fire;
+    Swal.fire = function (...args) {
+      if (args[0] === "Berhasil 🎉") launchSparkle();
+      return oldFire.apply(this, args);
     };
-    reader.readAsDataURL(file);
-  }
-  
-  removeImageBtn.onclick=()=>{
-    imageInput.value="";
-    imagePreview.src="";
-    imagePreview.style.display="none";
-    removeImageBtn.style.display="none";
-  };
-  
-  
-  /* ===============================
-     VALIDATION
-  =================================*/
-  function validateAndSend(){
-    const ticketType=document.getElementById("ticketType");
-    const category=document.getElementById("category");
-    const actionType=document.getElementById("actionType");
-    const method=document.getElementById("method");
-    const priority=document.getElementById("method");
-    const endpoint=document.getElementById("priority");
-    const params=document.getElementById("params");
-    const description=document.getElementById("description");
-    const workflow=document.getElementById("workflow");
-  
-    const req=[ticketType,category,actionType,method,priority,endpoint,params,description,workflow];
-  
-    if(req.some(f=>!f.value.trim()))
-      return Swal.fire("Oops","Semua field wajib diisi","warning");
-  
-    if(!selectedPics.length)
-      return Swal.fire("PIC kosong","Pilih minimal 1 PIC","warning");
-  
-    sendToTelegram();
-  }
-  
-  
-  /* ===============================
-     SEND TELEGRAM
-  =================================*/
-  async function sendToTelegram(){
-  
-    const ticketType=document.getElementById("ticketType");
-    const category=document.getElementById("category");
-    const actionType=document.getElementById("actionType");
-    const method=document.getElementById("method");
-    const priority=document.getElementById("priority");
-    const endpoint=document.getElementById("endpoint");
-    const params=document.getElementById("params");
-    const description=document.getElementById("description");
-    const workflow=document.getElementById("workflow");
-  
-    Swal.fire({title:"Mengirim tiket...",didOpen:()=>Swal.showLoading()});
-  
-    const caption=`
+
+
+    /* ===============================
+       TELEGRAM CONFIG
+    =================================*/
+    const BOT_TOKEN = "6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o";
+    const CHAT_ID = "-1003521971868";
+
+
+    /* ===============================
+       COMBOBOX FIX (INI YANG ERROR)
+    =================================*/
+
+    document.querySelectorAll(".combo").forEach(combo => {
+      const display = combo.querySelector(".combo-display");
+      const list = combo.querySelector(".combo-list");
+      const hidden = document.getElementById(combo.dataset.target);
+
+      display.addEventListener("click", (e) => {
+        e.stopPropagation();
+        document.querySelectorAll(".combo").forEach(c => {
+          if (c !== combo) c.classList.remove("open");
+        });
+        combo.classList.toggle("open");
+      });
+
+      list.querySelectorAll("div").forEach(item => {
+        item.addEventListener("click", (e) => {
+          e.stopPropagation();
+          display.textContent = item.textContent;
+          hidden.value = item.textContent;
+
+          list.querySelectorAll("div").forEach(i => i.classList.remove("active"));
+          item.classList.add("active");
+
+          combo.classList.remove("open");
+        });
+      });
+    });
+
+    /* klik luar tutup */
+    document.addEventListener("click", () => {
+      document.querySelectorAll(".combo").forEach(c => c.classList.remove("open"));
+    });
+
+
+    /* ===============================
+       PIC SELECT
+    =================================*/
+    let selectedPics = [];
+    document.querySelectorAll(".pic-item").forEach(el => {
+      el.addEventListener("click", () => {
+        const p = el.dataset.pic;
+        el.classList.toggle("active");
+        selectedPics.includes(p)
+          ? selectedPics = selectedPics.filter(x => x !== p)
+          : selectedPics.push(p);
+      });
+    });
+
+
+    /* ===============================
+       IMAGE UPLOAD
+    =================================*/
+    const imageInput = document.getElementById("image");
+    const imagePreview = document.getElementById("imagePreview");
+    const removeImageBtn = document.getElementById("removeImageBtn");
+    const dropArea = document.getElementById("dropArea");
+
+    dropArea.addEventListener("click", () => imageInput.click());
+
+    dropArea.addEventListener("dragover", e => {
+      e.preventDefault();
+    });
+
+    dropArea.addEventListener("drop", e => {
+      e.preventDefault();
+      if (e.dataTransfer.files.length) {
+        imageInput.files = e.dataTransfer.files;
+        showImagePreview(e.dataTransfer.files[0]);
+      }
+    });
+
+    document.addEventListener("paste", e => {
+      const items = e.clipboardData.items;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") !== -1) {
+          const file = items[i].getAsFile();
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          imageInput.files = dt.files;
+          showImagePreview(file);
+          break;
+        }
+      }
+    });
+
+    function showImagePreview(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = "block";
+        removeImageBtn.style.display = "inline-block";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    removeImageBtn.onclick = () => {
+      imageInput.value = "";
+      imagePreview.src = "";
+      imagePreview.style.display = "none";
+      removeImageBtn.style.display = "none";
+    };
+
+
+    /* ===============================
+       VALIDATION
+    =================================*/
+    function validateAndSend() {
+      const ticketType = document.getElementById("ticketType");
+      const category = document.getElementById("category");
+      const actionType = document.getElementById("actionType");
+      const method = document.getElementById("method");
+      const priority = document.getElementById("method");
+      const endpoint = document.getElementById("priority");
+      const params = document.getElementById("params");
+      const description = document.getElementById("description");
+      const workflow = document.getElementById("workflow");
+
+      const req = [ticketType, category, actionType, method, priority, endpoint, params, description, workflow];
+
+      if (req.some(f => !f.value.trim()))
+        return Swal.fire("Oops", "Semua field wajib diisi", "warning");
+
+      if (!selectedPics.length)
+        return Swal.fire("PIC kosong", "Pilih minimal 1 PIC", "warning");
+
+      sendToTelegram();
+    }
+
+
+    document.querySelectorAll(".combo").forEach(function (combo) {
+
+      var display = combo.querySelector(".combo-display");
+      var list = combo.querySelector(".combo-list");
+      var hidden = document.getElementById(combo.dataset.target);
+
+      if (!display || !list || !hidden) return;
+
+      display.addEventListener("click", function (e) {
+        e.stopPropagation();
+
+        document.querySelectorAll(".combo").forEach(function (c) {
+          c.classList.remove("open");
+        });
+
+        combo.classList.toggle("open");
+      });
+
+      list.querySelectorAll("div").forEach(function (item) {
+        item.addEventListener("click", function (e) {
+          e.stopPropagation();
+
+          var value = item.textContent.trim();
+
+          display.textContent = value;
+          hidden.value = value;
+
+          combo.classList.remove("open");
+
+          // AUTO TEMPLATE JIKA CATEGORY
+          if (combo.dataset.target === "category") {
+            applyTemplate(value);
+          }
+        });
+      });
+
+    });
+
+    document.addEventListener("click", function () {
+      document.querySelectorAll(".combo").forEach(function (c) {
+        c.classList.remove("open");
+      });
+    });
+
+    function applyTemplate(category) {
+
+var description = document.getElementById("description");
+var workflow = document.getElementById("workflow");
+
+if (!description || !workflow) return;
+
+/* ================= BUG ================= */
+
+if (category === "Bug") {
+
+  description.value =
+`Background:
+Ditemukan ketidaksesuaian pada modul ___ saat user melakukan proses ___.
+
+Issue:
+Sistem tidak menampilkan data / gagal memproses request sesuai dengan requirement.
+
+Impact:
+- Menghambat proses bisnis
+- User tidak dapat melanjutkan workflow
+- Berpotensi menyebabkan data tidak akurat
+
+Expected Result:
+Sistem berjalan sesuai logic yang telah ditentukan dan menampilkan hasil yang benar.`;
+
+  workflow.value =
+`Precondition:
+User sudah login dan memiliki akses ke modul terkait.
+
+Steps to Reproduce:
+1. Masuk ke menu ___
+2. Klik tombol ___
+3. Input data ___
+4. Klik Submit / Proses
+
+Actual Result:
+Sistem menampilkan error / data tidak tampil.
+
+Expected Result:
+Data berhasil diproses dan ditampilkan sesuai filter.`;
+}
+
+/* ================= ERROR ================= */
+
+else if (category === "Error") {
+
+  description.value =
+`Background:
+Terjadi error pada endpoint ___ ketika sistem menerima request.
+
+Detail Error:
+- Status Code: 500 / 404 / 422
+- Message: ___
+
+Possible Cause:
+- Validasi parameter tidak sesuai
+- Null reference / undefined variable
+- Query database gagal
+- Foreign key constraint error
+
+Expected Result:
+Sistem menampilkan validasi yang jelas tanpa menghasilkan server error.`;
+
+  workflow.value =
+`Precondition:
+Endpoint aktif dan dapat diakses.
+
+Steps:
+1. Kirim request ke endpoint ___
+2. Sertakan parameter ___
+3. Sistem memproses request
+
+Actual Result:
+Server mengembalikan error response.
+
+Expected Result:
+Response sukses atau pesan validasi yang sesuai.`;
+}
+
+/* ================= NEW FEATURE ================= */
+
+else if (category === "New Feature") {
+
+  description.value =
+`Objective:
+Menambahkan fitur baru pada modul ___ untuk meningkatkan efisiensi dan pengalaman user.
+
+Scope:
+- Penambahan endpoint baru (jika backend)
+- Penambahan UI component (jika frontend)
+- Integrasi dengan database
+
+Business Value:
+- Mempercepat proses kerja
+- Mengurangi proses manual
+- Meningkatkan akurasi data
+
+Expected Result:
+Fitur berjalan stabil dan terintegrasi dengan sistem existing.`;
+
+  workflow.value =
+`High Level Flow:
+1. User login
+2. User mengakses menu ___
+3. User klik tombol ___
+4. Sistem menampilkan form / modal
+5. User mengisi data
+6. Sistem melakukan validasi
+7. Data tersimpan di database
+8. Sistem menampilkan notifikasi sukses`;
+}
+
+/* ================= REVISION FEATURE ================= */
+
+else if (category === "Revision Feature") {
+
+  description.value =
+`Background:
+Diperlukan perubahan pada fitur existing karena update requirement dari user/business.
+
+Change Detail:
+- Perubahan logic perhitungan
+- Penyesuaian validasi
+- Perubahan tampilan UI
+- Optimasi query
+
+Impact Area:
+Modul ___ dan relasi tabel terkait.
+
+Expected Result:
+Fitur mengikuti aturan terbaru tanpa merusak fungsi lain.`;
+
+  workflow.value =
+`Before:
+Sistem memproses data dengan logic lama.
+
+After:
+1. User mengakses fitur
+2. Sistem menerapkan logic baru
+3. Validasi mengikuti aturan terbaru
+4. Data tersimpan sesuai requirement baru`;
+}
+
+/* ================= CEK DATA ================= */
+
+else if (category === "Cek Data") {
+
+  description.value =
+`Background:
+Ditemukan perbedaan data antara sistem dan laporan user.
+
+Objective:
+Melakukan investigasi terhadap kemungkinan:
+- Data duplicate
+- Data tidak terupdate
+- Query agregasi tidak sesuai
+- Relasi tabel tidak sinkron
+
+Expected Output:
+Laporan hasil analisa dan rekomendasi perbaikan.`;
+
+  workflow.value =
+`Investigation Steps:
+1. Query data langsung dari database
+2. Bandingkan dengan laporan user
+3. Cek relasi antar tabel
+4. Validasi constraint & index
+5. Dokumentasikan hasil analisa`;
+}
+
+}
+    /* ===============================
+       SEND TELEGRAM
+    =================================*/
+    async function sendToTelegram() {
+
+      const ticketType = document.getElementById("ticketType");
+      const category = document.getElementById("category");
+      const actionType = document.getElementById("actionType");
+      const method = document.getElementById("method");
+      const priority = document.getElementById("priority");
+      const endpoint = document.getElementById("endpoint");
+      const params = document.getElementById("params");
+      const description = document.getElementById("description");
+      const workflow = document.getElementById("workflow");
+
+      Swal.fire({ title: "Mengirim tiket...", didOpen: () => Swal.showLoading() });
+
+      const caption = `
   🎫 *TIKET ${ticketType.value.toUpperCase()}*
   *Kategori*: ${category.value}
   
@@ -708,31 +1002,32 @@ button:hover{opacity:.95}
   *Workflow*
   ${workflow.value}
   `;
-  
-    if(imageInput.files.length){
-      const fd=new FormData();
-      fd.append("chat_id",CHAT_ID);
-      fd.append("photo",imageInput.files[0]);
-      fd.append("caption",caption);
-      fd.append("parse_mode","Markdown");
-    await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendPhoto`,{method:"POST",body:fd});
-    }else{
-    await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendMessage`,{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-          chat_id:CHAT_ID,
-          text:caption,
-          parse_mode:"Markdown"
-        })
-      });
+
+      if (imageInput.files.length) {
+        const fd = new FormData();
+        fd.append("chat_id", CHAT_ID);
+        fd.append("photo", imageInput.files[0]);
+        fd.append("caption", caption);
+        fd.append("parse_mode", "Markdown");
+        await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendPhoto`, { method: "POST", body: fd });
+      } else {
+        await fetch(`https://api.telegram.org/bot6293769087:AAHgRTAHAJj3yG6KC6dex3iNlYgUQjAJr0o/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: caption,
+            parse_mode: "Markdown"
+          })
+        });
+      }
+
+      Swal.fire("Berhasil 🎉", "Tiket terkirim", "success");
     }
-  
-    Swal.fire("Berhasil 🎉","Tiket terkirim","success");
-  }
-  
+
   </script>
-  
+
 
 </body>
+
 </html>
