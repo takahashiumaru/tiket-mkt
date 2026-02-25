@@ -519,11 +519,20 @@
         </div>
 
         <div>
+          <label>Author *</label>
+          <div class="pic-container">
+            <div class="pic-item" data-pic="@arifinabd">Arifin</div>
+            <div class="pic-item" data-pic="@Umarxch">Umar</div>
+            <div class="pic-item" data-pic="@Rmakie">Pedo</div>
+          </div>
+        </div>
+
+        <div>
           <label>PIC *</label>
           <div class="pic-container">
             <div class="pic-item" data-pic="@arifinabd">Arifin</div>
             <div class="pic-item" data-pic="@Umarxch">Umar</div>
-            <div class="pic-item" data-pic="@Rmakie">Pak Ridwan</div>
+            <div class="pic-item" data-pic="@Rmakie">Pedo</div>
           </div>
         </div>
 
@@ -559,6 +568,9 @@
     </div>
   </div>
 
+  <script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+  </script>
 
   <script>
 
@@ -788,17 +800,17 @@
 
     function applyTemplate(category) {
 
-var description = document.getElementById("description");
-var workflow = document.getElementById("workflow");
+      var description = document.getElementById("description");
+      var workflow = document.getElementById("workflow");
 
-if (!description || !workflow) return;
+      if (!description || !workflow) return;
 
-/* ================= BUG ================= */
+      /* ================= BUG ================= */
 
-if (category === "Bug") {
+      if (category === "Bug") {
 
-  description.value =
-`Background:
+        description.value =
+          `Background:
 Ditemukan ketidaksesuaian pada modul ___ saat user melakukan proses ___.
 
 Issue:
@@ -812,8 +824,8 @@ Impact:
 Expected Result:
 Sistem berjalan sesuai logic yang telah ditentukan dan menampilkan hasil yang benar.`;
 
-  workflow.value =
-`Precondition:
+        workflow.value =
+          `Precondition:
 User sudah login dan memiliki akses ke modul terkait.
 
 Steps to Reproduce:
@@ -827,14 +839,14 @@ Sistem menampilkan error / data tidak tampil.
 
 Expected Result:
 Data berhasil diproses dan ditampilkan sesuai filter.`;
-}
+      }
 
-/* ================= ERROR ================= */
+      /* ================= ERROR ================= */
 
-else if (category === "Error") {
+      else if (category === "Error") {
 
-  description.value =
-`Background:
+        description.value =
+          `Background:
 Terjadi error pada endpoint ___ ketika sistem menerima request.
 
 Detail Error:
@@ -850,8 +862,8 @@ Possible Cause:
 Expected Result:
 Sistem menampilkan validasi yang jelas tanpa menghasilkan server error.`;
 
-  workflow.value =
-`Precondition:
+        workflow.value =
+          `Precondition:
 Endpoint aktif dan dapat diakses.
 
 Steps:
@@ -864,14 +876,14 @@ Server mengembalikan error response.
 
 Expected Result:
 Response sukses atau pesan validasi yang sesuai.`;
-}
+      }
 
-/* ================= NEW FEATURE ================= */
+      /* ================= NEW FEATURE ================= */
 
-else if (category === "New Feature") {
+      else if (category === "New Feature") {
 
-  description.value =
-`Objective:
+        description.value =
+          `Objective:
 Menambahkan fitur baru pada modul ___ untuk meningkatkan efisiensi dan pengalaman user.
 
 Scope:
@@ -887,8 +899,8 @@ Business Value:
 Expected Result:
 Fitur berjalan stabil dan terintegrasi dengan sistem existing.`;
 
-  workflow.value =
-`High Level Flow:
+        workflow.value =
+          `High Level Flow:
 1. User login
 2. User mengakses menu ___
 3. User klik tombol ___
@@ -897,14 +909,14 @@ Fitur berjalan stabil dan terintegrasi dengan sistem existing.`;
 6. Sistem melakukan validasi
 7. Data tersimpan di database
 8. Sistem menampilkan notifikasi sukses`;
-}
+      }
 
-/* ================= REVISION FEATURE ================= */
+      /* ================= REVISION FEATURE ================= */
 
-else if (category === "Revision Feature") {
+      else if (category === "Revision Feature") {
 
-  description.value =
-`Background:
+        description.value =
+          `Background:
 Diperlukan perubahan pada fitur existing karena update requirement dari user/business.
 
 Change Detail:
@@ -919,8 +931,8 @@ Modul ___ dan relasi tabel terkait.
 Expected Result:
 Fitur mengikuti aturan terbaru tanpa merusak fungsi lain.`;
 
-  workflow.value =
-`Before:
+        workflow.value =
+          `Before:
 Sistem memproses data dengan logic lama.
 
 After:
@@ -928,14 +940,14 @@ After:
 2. Sistem menerapkan logic baru
 3. Validasi mengikuti aturan terbaru
 4. Data tersimpan sesuai requirement baru`;
-}
+      }
 
-/* ================= CEK DATA ================= */
+      /* ================= CEK DATA ================= */
 
-else if (category === "Cek Data") {
+      else if (category === "Cek Data") {
 
-  description.value =
-`Background:
+        description.value =
+          `Background:
 Ditemukan perbedaan data antara sistem dan laporan user.
 
 Objective:
@@ -948,16 +960,16 @@ Melakukan investigasi terhadap kemungkinan:
 Expected Output:
 Laporan hasil analisa dan rekomendasi perbaikan.`;
 
-  workflow.value =
-`Investigation Steps:
+        workflow.value =
+          `Investigation Steps:
 1. Query data langsung dari database
 2. Bandingkan dengan laporan user
 3. Cek relasi antar tabel
 4. Validasi constraint & index
 5. Dokumentasikan hasil analisa`;
-}
+      }
 
-}
+    }
     /* ===============================
        SEND TELEGRAM
     =================================*/
